@@ -1,0 +1,2 @@
+include ':app', ':SpiderMan-core', ':SpiderMan-http'
+rootProject.name = 'SpiderMan'
