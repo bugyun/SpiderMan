@@ -119,7 +119,7 @@ class AutoTransform extends Transform {
             /**
              * 遍历jar
              */
-            input.jarInputs.parallelStream().filter { it.status != Status.NOTCHANGED }.each { JarInput jarInput ->
+            input.jarInputs.parallelStream().each { JarInput jarInput ->
                 waitableExecutor.execute(new Callable<String>() {
 
                     @Override
