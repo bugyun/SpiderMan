@@ -11,6 +11,28 @@ class TestPlugin : Plugin<Project> {
 
     override fun apply(project: Project) {
 
+        println(project.rootProject)
+        println(project.rootDir)
+        println(project.buildDir)
+        println(project.buildFile)
+        println(project.parent)
+        println(project.name)
+        println(project.displayName)
+        println(project.description)
+        println(project.group)
+        println(project.version)
+        println(project.status)
+        println(project.childProjects)
+        println(project.project)
+        println(project.allprojects)
+        println(project.subprojects)
+        println(project.path)
+        println(project.defaultTasks)
+        println(project.projectDir)
+        println(project.providers)
+        println(project.objects)
+        println(project.layout)
+
         when {
             project.plugins.hasPlugin("com.android.application") -> {//是 Android 主项目
                 project.extensions.getByName("android") as AppExtension

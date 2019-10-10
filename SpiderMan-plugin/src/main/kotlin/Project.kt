@@ -3,9 +3,7 @@ import com.android.repository.Revision
 import org.gradle.api.Project
 
 /**
- * Returns android extension
- *
- * @author johnsonlee
+ *  didi gradle 开源项目
  */
 inline fun <reified T : BaseExtension> Project.getAndroid(): T = extensions.getByName("android") as T
 
