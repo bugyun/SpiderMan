@@ -155,6 +155,9 @@ class AutoTransform extends Transform {
              * 遍历目录
              */
             input.directoryInputs.each { DirectoryInput directoryInput ->
+
+
+
                 waitableExecutor.execute(new Callable<String>() {
 
                     @Override
