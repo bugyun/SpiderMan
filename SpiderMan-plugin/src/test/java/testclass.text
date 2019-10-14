@@ -1,17 +1,11 @@
-// class version 51.0 (51)
+// class version 52.0 (52)
 // access flags 0x601
-public abstract interface pkg/Comparable implements pkg/Mesurable  {
+public abstract interface java/lang/Runnable {
 
+  // compiled from: Runnable.java
 
-  // access flags 0x19
-  public final static I LESS = -1
-
-  // access flags 0x19
-  public final static I EQUAL = 0
-
-  // access flags 0x19
-  public final static I GREATER = 1
+  @Ljava/lang/FunctionalInterface;()
 
   // access flags 0x401
-  public abstract compareTo(Ljava/lang/Object;)I
+  public abstract run()V
 }
