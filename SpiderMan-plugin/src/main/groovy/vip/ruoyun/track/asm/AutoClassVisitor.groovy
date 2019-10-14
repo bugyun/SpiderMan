@@ -116,7 +116,7 @@ class AutoClassVisitor extends ClassVisitor {
     @Override
     void visitEnd() {
         if (GlobalConfig.isOpenLogTrack && LogAnalyticsUtil.isInstanceOfFragment(mSuperName)) {
-            MethodVisitor mv
+//            MethodVisitor mv
             // 添加剩下的方法，确保super.onHiddenChanged(hidden);等先被调用
             Iterator<Map.Entry<String, LogMethodCell>> iterator = LogHookConfig.sFragmentMethods.entrySet().iterator()
 //            Logger.info("visitedFragMethods:" + visitedFragMethods)
@@ -128,7 +128,7 @@ class AutoClassVisitor extends ClassVisitor {
                     continue
                 }
                 Logger.info("||Hooked class:injected method:" + methodCell.agentName)
-                mv = classVisitor.visitMethod(Opcodes.ACC_PUBLIC, methodCell.name, methodCell.desc, null, null)
+                MethodVisitor mv = classVisitor.visitMethod(Opcodes.ACC_PUBLIC, methodCell.name, methodCell.desc, null, null)
                 mv.visitCode()
                 // call super
                 LogAnalyticsUtil.visitMethodWithLoadedParams(mv, Opcodes.INVOKESPECIAL, mSuperName, methodCell.name,

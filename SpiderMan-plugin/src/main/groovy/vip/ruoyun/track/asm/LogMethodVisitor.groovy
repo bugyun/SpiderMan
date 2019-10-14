@@ -73,7 +73,7 @@ class LogMethodVisitor extends AdviceAdapter {
          */
         if (methodName.trim().startsWith('lambda$') && LogAnalyticsUtil.isPrivate(access) &&
                 LogAnalyticsUtil.isSynthetic(access)) {
-            LogMethodCell logMethodCell = LogHookConfig.sLambdaMethods.get(desc)
+            LogMethodCell logMethodCell = LogHookConfig.sLambdaMethods.get(methodDesc)
             if (logMethodCell != null) {
                 int paramStart = logMethodCell.paramsStart
                 if (LogAnalyticsUtil.isStatic(access)) {

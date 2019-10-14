@@ -30,19 +30,6 @@ public class AsmClassVisitor extends ClassVisitor {
         return super.visitAnnotation(desc, visible);
     }
 
-
-    @Override
-    public AnnotationVisitor visitTypeAnnotation(final int typeRef, final TypePath typePath, final String descriptor,
-            final boolean visible) {
-        LogM.log("=====---------- visitTypeAnnotation ----------=====");
-        LogM.log("typeRef:" + typeRef);
-        LogM.log("TypePath:" + typePath);
-        LogM.log("TypePath:" + typePath);
-        LogM.log("descriptor:" + descriptor);
-        LogM.log("visible:" + visible);
-        return super.visitTypeAnnotation(typeRef, typePath, descriptor, visible);
-    }
-
     @Override
     public MethodVisitor visitMethod(int access, String name, String desc, String signature, String[] exceptions) {
         LogM.log("=====---------- visitMethod ----------=====");
