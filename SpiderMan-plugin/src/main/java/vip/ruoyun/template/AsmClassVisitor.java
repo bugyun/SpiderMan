@@ -1,3 +1,5 @@
+package vip.ruoyun.template;
+
 import java.util.Arrays;
 import org.objectweb.asm.AnnotationVisitor;
 import org.objectweb.asm.ClassVisitor;
