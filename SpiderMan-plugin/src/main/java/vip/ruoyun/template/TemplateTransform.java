@@ -37,7 +37,7 @@ public class TemplateTransform extends Transform {
     private ForkJoinPool executor = new ForkJoinPool(Runtime.getRuntime().availableProcessors(),
             ForkJoinPool.defaultForkJoinWorkerThreadFactory, null, true);
 
-    public TemplateTransform(final Project project) {
+    TemplateTransform(final Project project) {
         this.project = project;
         mLogger = project.getLogger();
         mByType = project.getExtensions().findByType(TemplateMode.class);
@@ -130,7 +130,6 @@ public class TemplateTransform extends Transform {
                     handleJarInput(jarInput.getFile(), dest, true);
                 }
             }
-
 
             for (DirectoryInput directoryInput : input.getDirectoryInputs()) {
                 File dest = outputProvider.getContentLocation(directoryInput.getName(),

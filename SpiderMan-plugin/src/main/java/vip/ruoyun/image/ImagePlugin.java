@@ -1,5 +1,6 @@
 package vip.ruoyun.image;
 
+import com.android.build.api.transform.Transform;
 import com.android.build.gradle.AppExtension;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
@@ -7,6 +8,8 @@ import org.gradle.api.logging.Logger;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
+import java.util.Iterator;
+import java.util.ServiceLoader;
 
 public class ImagePlugin implements Plugin<Project> {
 
@@ -26,5 +29,22 @@ public class ImagePlugin implements Plugin<Project> {
 //        if (appExtension != null) {
 //            appExtension.registerTransform(new ImageTransform(project), Collections.EMPTY_LIST);
 //        }
+
+
+        //spi 动态发现 来加载不同的插件 Transform和 task
+        //会加载 META-INF/services/com.android.build.api.transform.Transform 文件中的内容
+        //com.mogujie.uni.sl.Pig
+        //com.mogujie.uni.sl.Dog
+        ServiceLoader<Transform> load = ServiceLoader.load(Transform.class);
+
+        Iterator<Transform> iterator = load.iterator();
+        while (iterator.hasNext()) {
+            Transform next = iterator.next();
+//            next.transform();
+        }
+        //获取
+        appExtension.getApplicationVariants().forEach(applicationVariant -> {
+
+        });
     }
 }
