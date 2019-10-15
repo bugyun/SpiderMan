@@ -37,6 +37,7 @@ class TestTransform : Transform() {
 
 
 
+
         inputs.parallelStream().forEach { it ->
 
             it.jarInputs.parallelStream().filter { it.status != NOTCHANGED }.forEach { jarInput ->

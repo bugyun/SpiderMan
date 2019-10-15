@@ -1,7 +1,9 @@
 import com.android.build.gradle.AppExtension
 import com.android.build.gradle.LibraryExtension
+import com.android.builder.model.AndroidProject
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import java.io.File
 
 open class GreetingPluginExtension {
     var message = "Hello from GreetingPlugin"
@@ -45,9 +47,18 @@ class TestPlugin : Plugin<Project> {
             }
         }
 
+        project.buildDir.file(AndroidProject.FD_INTERMEDIATES, "transforms", "dexBuilder").let { dexBuilder ->
+            if (dexBuilder.exists()) {
+                dexBuilder.deleteRecursively()
+            }
+        }
+
+        //intermediates transforms dexBuilder
         javaClass.classLoader
         var extension = project.extensions.create("greeting", GreetingPluginExtension::class.java)
 //        extension = project.extensions.create<GreetingPluginExtension>("greeting")
     }
 }
+
+fun File.file(vararg path: String) = File(this, path.joinToString(File.separator))
 

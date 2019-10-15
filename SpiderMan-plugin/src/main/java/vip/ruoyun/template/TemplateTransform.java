@@ -1,24 +1,19 @@
 package vip.ruoyun.template;
 
-import com.android.build.api.transform.DirectoryInput;
-import com.android.build.api.transform.Format;
-import com.android.build.api.transform.JarInput;
-import com.android.build.api.transform.QualifiedContent;
-import com.android.build.api.transform.Status;
-import com.android.build.api.transform.Transform;
-import com.android.build.api.transform.TransformException;
-import com.android.build.api.transform.TransformInput;
-import com.android.build.api.transform.TransformInvocation;
-import com.android.build.api.transform.TransformOutputProvider;
+import com.android.build.api.transform.*;
 import com.android.build.gradle.internal.pipeline.TransformManager;
+import com.android.builder.model.AndroidProject;
 import com.google.common.io.Files;
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
+import org.gradle.api.Project;
+import org.gradle.api.logging.Logger;
+import org.objectweb.asm.ClassReader;
+import org.objectweb.asm.ClassWriter;
+
+import java.io.*;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.nio.file.attribute.FileTime;
 import java.util.Collection;
 import java.util.Enumeration;
@@ -30,12 +25,6 @@ import java.util.zip.CRC32;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
-import org.gradle.api.Project;
-import org.gradle.api.logging.Logger;
-import org.objectweb.asm.ClassReader;
-import org.objectweb.asm.ClassWriter;
 
 public class TemplateTransform extends Transform {
 
@@ -93,8 +82,28 @@ public class TemplateTransform extends Transform {
         //当前是否是增量编译
         boolean isIncremental = transformInvocation.isIncremental();
         if (!isIncremental) {
-            outputProvider.deleteAll();
+            executor.execute(() -> {
+                Path path = Paths.get(project.getBuildDir().getAbsolutePath(), AndroidProject.FD_INTERMEDIATES, "transforms", "dexBuilder");
+                LogM.log("路径:" + path.toString());
+                File file = path.toFile();
+                if (file.exists()) {
+                    try {
+                        com.android.utils.FileUtils.deleteDirectoryContents(file);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+            executor.execute(() -> {
+                try {
+                    outputProvider.deleteAll();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            });
+            executor.awaitQuiescence(1, TimeUnit.MINUTES);
         }
+
         for (TransformInput input : inputs) {
             for (JarInput jarInput : input.getJarInputs()) {
                 File dest = outputProvider.getContentLocation(
@@ -121,6 +130,8 @@ public class TemplateTransform extends Transform {
                     handleJarInput(jarInput.getFile(), dest, true);
                 }
             }
+
+
             for (DirectoryInput directoryInput : input.getDirectoryInputs()) {
                 File dest = outputProvider.getContentLocation(directoryInput.getName(),
                         directoryInput.getContentTypes(), directoryInput.getScopes(),
@@ -161,7 +172,6 @@ public class TemplateTransform extends Transform {
         }
         executor.shutdown();
         executor.awaitTermination(1, TimeUnit.MINUTES);
-        long endTime = System.currentTimeMillis();
         long cost = (System.currentTimeMillis() - startTime) / 1000;
         LogM.log("执行时间" + cost + "秒");
     }
@@ -231,7 +241,7 @@ public class TemplateTransform extends Transform {
                 newEntryContent = weaveSingleClassToByteArray(originalFile);
             }
             CRC32 crc32 = new CRC32();
-            crc32.update(newEntryContent);
+            crc32.update(newEntryContent, 0, newEntryContent.length);
             outEntry.setCrc(crc32.getValue());
             outEntry.setMethod(ZipEntry.STORED);
             outEntry.setSize(newEntryContent.length);
@@ -296,4 +306,5 @@ public class TemplateTransform extends Transform {
         LogM.log(message);
         mLogger.info(message);
     }
+
 }

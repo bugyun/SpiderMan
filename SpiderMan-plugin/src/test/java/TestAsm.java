@@ -1,5 +1,8 @@
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.concurrent.ForkJoinPool;
+import java.util.concurrent.TimeUnit;
+
 import org.junit.*;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
@@ -70,4 +73,57 @@ public class TestAsm {
     //methodName: <clinit>
     //methodDes: ()V
 
+
+    //栅栏的方式,先执行 1 2 ,然后阻塞,然后才开始执行 3 4
+    @Test
+    public void testC() throws InterruptedException {
+        ForkJoinPool executor = new ForkJoinPool(Runtime.getRuntime().availableProcessors(),
+                ForkJoinPool.defaultForkJoinWorkerThreadFactory, null, true);
+        executor.execute(() -> {
+            System.out.println("1 begin");
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            System.out.println("1 end");
+        });
+
+        executor.execute(() -> {
+            System.out.println("2 begin");
+
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            System.out.println("2 end");
+        });
+        executor.awaitQuiescence(1, TimeUnit.MINUTES);
+        System.out.println("开始");
+
+        executor.execute(() -> {
+            System.out.println("3 begin");
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            System.out.println("3 end");
+        });
+
+        executor.execute(() -> {
+            System.out.println("4 begin");
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            System.out.println("4 end");
+        });
+        executor.shutdown();
+        executor.awaitTermination(1, TimeUnit.MINUTES);
+        System.out.println("结束");
+
+    }
 }
