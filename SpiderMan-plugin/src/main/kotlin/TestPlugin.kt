@@ -44,6 +44,8 @@ class TestPlugin : Plugin<Project> {
                 }
             }
         }
+
+        javaClass.classLoader
         var extension = project.extensions.create("greeting", GreetingPluginExtension::class.java)
 //        extension = project.extensions.create<GreetingPluginExtension>("greeting")
     }

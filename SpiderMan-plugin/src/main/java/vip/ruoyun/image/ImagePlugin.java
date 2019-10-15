@@ -17,5 +17,14 @@ public class ImagePlugin implements Plugin<Project> {
         logger = project.getLogger();
         AppExtension appExtension = (AppExtension) project.getProperties().get("android");
         appExtension.registerTransform(new ImageTransform(project), Collections.EMPTY_LIST);
+
+
+//获取 AppExtension 的三种方式
+//        AppExtension appExtension = project.getExtensions().getByType(AppExtension.class);//gradle 3.5
+//        AppExtension appExtension = (AppExtension) project.getExtensions().getByName("android");//会报异常
+//        AppExtension appExtension = (AppExtension) project.getProperties().get("android");//不会报异常,如果获取不到,就返回 null
+//        if (appExtension != null) {
+//            appExtension.registerTransform(new ImageTransform(project), Collections.EMPTY_LIST);
+//        }
     }
 }
