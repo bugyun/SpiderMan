@@ -17,7 +17,6 @@ apply plugin: 'groovy'
 apply plugin: 'kotlin-kapt'
 apply plugin: 'idea' //idea 插件
 
-
 //plugins {
 //    id 'java'
 //    id 'maven'
@@ -25,11 +24,6 @@ apply plugin: 'idea' //idea 插件
 //    id 'org.jetbrains.kotlin.jvm' version '1.3.50'
 //    id 'base'
 //}
-
-group 'vip.ruoyun.plugin'
-version '1.0.0'
-def artifactId = 'spider-man'
-
 targetCompatibility = JavaVersion.VERSION_1_8
 sourceCompatibility = JavaVersion.VERSION_1_8
 
@@ -59,10 +53,12 @@ dependencies {
 uploadArchives {
     repositories {
         mavenDeployer {
+            //设置插件的GAV参数
+            pom.groupId = 'vip.ruoyun.plugin'
+            pom.artifactId = 'spider-man'
+            pom.version = '1.0.0'
+            //文件发布到下面目录
             repository(url: uri('../release'))
-            pom.groupId = group
-            pom.artifactId = artifactId
-            pom.version = version
         }
     }
 }
