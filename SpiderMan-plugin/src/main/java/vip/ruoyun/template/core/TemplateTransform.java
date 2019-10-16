@@ -12,6 +12,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.TimeUnit;
+
 import vip.ruoyun.template.constant.ConstantValue;
 import vip.ruoyun.template.ext.TemplateExt;
 import vip.ruoyun.template.utils.LogM;
@@ -45,7 +46,7 @@ public class TemplateTransform extends Transform {
         TransformOutputProvider outputProvider = transformInvocation
                 .getOutputProvider();//OutputProvider管理输出路径，如果消费型输入为空，你会发现OutputProvider == null
         boolean isIncremental = transformInvocation.isIncremental();  //当前是否是增量编译
-        if (!isIncremental) {
+        if (!isIncremental) {//如果不是自动增长,就删除文件 DexBuilderFolder 和 OutputFolder
             executor.execute(() -> {
                 HandleHelper.cleanDexBuilderFolder(project.getBuildDir().getAbsolutePath());
             });
