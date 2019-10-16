@@ -1,8 +1,9 @@
-package vip.ruoyun.template;
+package vip.ruoyun.template.asm;
 
 import org.objectweb.asm.AnnotationVisitor;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.commons.AdviceAdapter;
+import vip.ruoyun.template.utils.LogM;
 
 public class AsmMethodVisitor extends AdviceAdapter {
 

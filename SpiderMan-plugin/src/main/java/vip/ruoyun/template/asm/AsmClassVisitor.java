@@ -1,10 +1,11 @@
-package vip.ruoyun.template;
+package vip.ruoyun.template.asm;
 
 import java.util.Arrays;
 import org.objectweb.asm.AnnotationVisitor;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
+import vip.ruoyun.template.utils.LogM;
 
 public class AsmClassVisitor extends ClassVisitor {
 

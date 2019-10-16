@@ -1,10 +1,10 @@
-package vip.ruoyun.template;
+package vip.ruoyun.template.ext;
 
-public class TemplateMode {
+public class TemplateExt {
 
-    public boolean isOpen;
+    private boolean isOpen;
 
-    public boolean isLog;
+    private boolean isLog;
 
     public boolean isOpen() {
         return isOpen;

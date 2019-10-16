@@ -1,44 +1,33 @@
-package vip.ruoyun.template;
+package vip.ruoyun.template.core;
 
 import com.android.build.api.transform.*;
 import com.android.build.gradle.internal.pipeline.TransformManager;
-import com.android.builder.model.AndroidProject;
-import com.android.tools.r8.code.Const;
 import com.google.common.io.Files;
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
 import org.gradle.api.Project;
-import org.gradle.api.logging.Logger;
-import org.objectweb.asm.ClassReader;
-import org.objectweb.asm.ClassWriter;
 
 import java.io.*;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.attribute.FileTime;
 import java.util.Collection;
-import java.util.Enumeration;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.TimeUnit;
-import java.util.zip.CRC32;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
-import java.util.zip.ZipOutputStream;
+import vip.ruoyun.template.constant.ConstantValue;
+import vip.ruoyun.template.ext.TemplateExt;
+import vip.ruoyun.template.utils.LogM;
 
 public class TemplateTransform extends Transform {
 
     private final Project project;
 
-    private final TemplateMode templateMode;
+    private final TemplateExt templateMode;
 
     private boolean isOpen;
 
     private ForkJoinPool executor = new ForkJoinPool(Runtime.getRuntime().availableProcessors(),
             ForkJoinPool.defaultForkJoinWorkerThreadFactory, null, true);
 
-    TemplateTransform(final Project project, TemplateMode templateMode) {
+    public TemplateTransform(final Project project, TemplateExt templateMode) {
         this.project = project;
         this.templateMode = templateMode;//LogM.log(templateMode.toString());//在这里还获取不到变量的值
     }
@@ -52,34 +41,16 @@ public class TemplateTransform extends Transform {
         this.isOpen = templateMode.isOpen();
         LogM.log(templateMode.toString());
         long startTime = System.currentTimeMillis();
-
-        //消费型输入，可以从中获取jar包和class文件夹路径。需要输出给下一个任务
-        Collection<TransformInput> inputs = transformInvocation.getInputs();
-        //OutputProvider管理输出路径，如果消费型输入为空，你会发现OutputProvider == null
-        TransformOutputProvider outputProvider = transformInvocation.getOutputProvider();
-        //当前是否是增量编译
-        boolean isIncremental = transformInvocation.isIncremental();
+        Collection<TransformInput> inputs = transformInvocation.getInputs();//消费型输入，可以从中获取jar包和class文件夹路径。需要输出给下一个任务
+        TransformOutputProvider outputProvider = transformInvocation
+                .getOutputProvider();//OutputProvider管理输出路径，如果消费型输入为空，你会发现OutputProvider == null
+        boolean isIncremental = transformInvocation.isIncremental();  //当前是否是增量编译
         if (!isIncremental) {
             executor.execute(() -> {
-                Path path = Paths
-                        .get(project.getBuildDir().getAbsolutePath(), AndroidProject.FD_INTERMEDIATES, "transforms",
-                                "dexBuilder");
-                LogM.log("路径:" + path.toString());
-                File file = path.toFile();
-                if (file.exists()) {
-                    try {
-                        com.android.utils.FileUtils.deleteDirectoryContents(file);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
+                HandleHelper.cleanDexBuilderFolder(project.getBuildDir().getAbsolutePath());
             });
             executor.execute(() -> {
-                try {
-                    outputProvider.deleteAll();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+                HandleHelper.cleanOutputFolder(outputProvider);
             });
             executor.awaitQuiescence(1, TimeUnit.MINUTES);
         }
@@ -165,7 +136,7 @@ public class TemplateTransform extends Transform {
                         String filePath = file.getAbsolutePath();
                         File outputFile = new File(filePath.replace(inputDirPath, outputDirPath));
                         try {
-                            weaveSingleClassToFile(file, outputFile, inputDirPath);
+                            HandleHelper.handleSingleClassToFile(file, outputFile, inputDirPath);
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
@@ -186,7 +157,7 @@ public class TemplateTransform extends Transform {
     private void handleSingleFile(final File inputFile, final File destFile, final String srcDirPath) {
         executor.execute(() -> {
             try {
-                weaveSingleClassToFile(inputFile, destFile, srcDirPath);
+                HandleHelper.handleSingleClassToFile(inputFile, destFile, srcDirPath);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -197,7 +168,7 @@ public class TemplateTransform extends Transform {
         executor.execute(() -> {
             try {
                 if (isOpen) {
-                    weaveJar(srcJar, destJar);
+                    HandleHelper.handleJar(srcJar, destJar);
                 } else {
                     FileUtils.copyFile(srcJar, destJar);
                 }
@@ -205,85 +176,6 @@ public class TemplateTransform extends Transform {
                 e.printStackTrace();
             }
         });
-    }
-
-    private void weaveJar(File inputJar, File outputJar) throws IOException {
-        ZipFile inputZip = new ZipFile(inputJar);
-        ZipOutputStream outputZip = new ZipOutputStream(new BufferedOutputStream(
-                java.nio.file.Files.newOutputStream(outputJar.toPath())));
-        Enumeration<? extends ZipEntry> inEntries = inputZip.entries();
-        while (inEntries.hasMoreElements()) {
-            ZipEntry entry = inEntries.nextElement();
-            InputStream originalFile =
-                    new BufferedInputStream(inputZip.getInputStream(entry));
-            ZipEntry outEntry = new ZipEntry(entry.getName());
-            byte[] newEntryContent;
-            // seperator of entry name is always '/', even in windows
-            if (!isWeavableClass(outEntry.getName().replace("/", "."))) {
-                newEntryContent = IOUtils.toByteArray(originalFile);
-            } else {
-                newEntryContent = weaveSingleClassToByteArray(originalFile);
-            }
-            CRC32 crc32 = new CRC32();
-            crc32.update(newEntryContent, 0, newEntryContent.length);
-            outEntry.setCrc(crc32.getValue());
-            outEntry.setMethod(ZipEntry.STORED);
-            outEntry.setSize(newEntryContent.length);
-            outEntry.setCompressedSize(newEntryContent.length);
-            outEntry.setLastAccessTime(ZERO);
-            outEntry.setLastModifiedTime(ZERO);
-            outEntry.setCreationTime(ZERO);
-            outputZip.putNextEntry(outEntry);
-            outputZip.write(newEntryContent);
-            outputZip.closeEntry();
-        }
-        outputZip.flush();
-        outputZip.close();
-    }
-
-    private static final FileTime ZERO = FileTime.fromMillis(0);
-
-    private byte[] weaveSingleClassToByteArray(InputStream inputStream) throws IOException {
-        //开始处理，通过 ASM
-        ClassReader classReader = new ClassReader(inputStream);
-        //writer
-        ClassWriter classWriter = new ClassWriter(classReader, ClassWriter.COMPUTE_MAXS);
-        //visitor
-        AsmClassVisitor asmClassVisitor = new AsmClassVisitor(classWriter);
-        //转换
-        classReader.accept(asmClassVisitor, ClassReader.EXPAND_FRAMES);
-        //输出字节码
-        return classWriter.toByteArray();
-    }
-
-
-    private boolean isWeavableClass(String fullQualifiedClassName) {
-        return fullQualifiedClassName.endsWith(".class") && !fullQualifiedClassName.contains("R$")
-                && !fullQualifiedClassName.contains("R.class") && !fullQualifiedClassName
-                .contains("BuildConfig.class");
-    }
-
-    private static final String FILE_SEP = File.separator;
-
-    private void weaveSingleClassToFile(File inputFile, File outputFile, String inputBaseDir)
-            throws IOException {
-        if (!inputBaseDir.endsWith(FILE_SEP)) {
-            inputBaseDir = inputBaseDir + FILE_SEP;
-        }
-        if (isWeavableClass(inputFile.getAbsolutePath().replace(inputBaseDir, "").replace(FILE_SEP, "."))) {
-            FileUtils.touch(outputFile);
-            InputStream inputStream = new FileInputStream(inputFile);
-            byte[] bytes = weaveSingleClassToByteArray(inputStream);
-            FileOutputStream fos = new FileOutputStream(outputFile);
-            fos.write(bytes);
-            fos.close();
-            inputStream.close();
-        } else {
-            if (inputFile.isFile()) {
-                FileUtils.touch(outputFile);
-                FileUtils.copyFile(inputFile, outputFile);
-            }
-        }
     }
 
     @Override

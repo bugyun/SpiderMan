@@ -1,4 +1,6 @@
-package vip.ruoyun.template;
+package vip.ruoyun.template.utils;
+
+import vip.ruoyun.template.constant.ConstantValue;
 
 public class LogM {
 
