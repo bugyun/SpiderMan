@@ -3,6 +3,7 @@ package vip.ruoyun.template;
 import com.android.build.api.transform.*;
 import com.android.build.gradle.internal.pipeline.TransformManager;
 import com.android.builder.model.AndroidProject;
+import com.android.tools.r8.code.Const;
 import com.google.common.io.Files;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
@@ -28,51 +29,28 @@ import java.util.zip.ZipOutputStream;
 
 public class TemplateTransform extends Transform {
 
-    private final TemplateMode mByType;
-
     private final Project project;
 
-    private final Logger mLogger;
+    private final TemplateMode templateMode;
+
+    private boolean isOpen;
 
     private ForkJoinPool executor = new ForkJoinPool(Runtime.getRuntime().availableProcessors(),
             ForkJoinPool.defaultForkJoinWorkerThreadFactory, null, true);
 
-    TemplateTransform(final Project project) {
+    TemplateTransform(final Project project, TemplateMode templateMode) {
         this.project = project;
-        mLogger = project.getLogger();
-        mByType = project.getExtensions().findByType(TemplateMode.class);
+        this.templateMode = templateMode;//LogM.log(templateMode.toString());//在这里还获取不到变量的值
     }
-
-    @Override
-    public String getName() {
-        return this.getClass().getSimpleName();
-    }
-
-    @Override
-    public Set<QualifiedContent.ContentType> getInputTypes() {
-        return TransformManager.CONTENT_CLASS;
-    }
-
-    @Override
-    public Set<? super QualifiedContent.Scope> getScopes() {
-        return TransformManager.SCOPE_FULL_PROJECT;
-    }
-
-    @Override
-    public boolean isIncremental() {
-        return true;
-    }
-
-    @Override
-    public boolean isCacheable() {
-        return true;
-    }
-
 
     @Override
     public void transform(final TransformInvocation transformInvocation)
             throws TransformException, InterruptedException, IOException {
         super.transform(transformInvocation);
+        ConstantValue.isLog = templateMode.isLog();
+        ConstantValue.isOpen = templateMode.isOpen();
+        this.isOpen = templateMode.isOpen();
+        LogM.log(templateMode.toString());
         long startTime = System.currentTimeMillis();
 
         //消费型输入，可以从中获取jar包和class文件夹路径。需要输出给下一个任务
@@ -83,7 +61,9 @@ public class TemplateTransform extends Transform {
         boolean isIncremental = transformInvocation.isIncremental();
         if (!isIncremental) {
             executor.execute(() -> {
-                Path path = Paths.get(project.getBuildDir().getAbsolutePath(), AndroidProject.FD_INTERMEDIATES, "transforms", "dexBuilder");
+                Path path = Paths
+                        .get(project.getBuildDir().getAbsolutePath(), AndroidProject.FD_INTERMEDIATES, "transforms",
+                                "dexBuilder");
                 LogM.log("路径:" + path.toString());
                 File file = path.toFile();
                 if (file.exists()) {
@@ -118,7 +98,7 @@ public class TemplateTransform extends Transform {
                             break;
                         case ADDED:
                         case CHANGED:
-                            handleJarInput(jarInput.getFile(), dest, true);
+                            handleJarInput(jarInput.getFile(), dest);
                             break;
                         case REMOVED:
                             if (dest.exists()) {
@@ -127,7 +107,7 @@ public class TemplateTransform extends Transform {
                             break;
                     }
                 } else {
-                    handleJarInput(jarInput.getFile(), dest, true);
+                    handleJarInput(jarInput.getFile(), dest);
                 }
             }
 
@@ -176,20 +156,30 @@ public class TemplateTransform extends Transform {
     }
 
     private void handleDirectory(File inputDir, File outputDir) {
-        final String inputDirPath = inputDir.getAbsolutePath();
-        final String outputDirPath = outputDir.getAbsolutePath();
-        if (inputDir.isDirectory()) {
-            for (final File file : com.android.utils.FileUtils.getAllFiles(inputDir)) {
-                executor.execute(() -> {
-                    String filePath = file.getAbsolutePath();
-                    File outputFile = new File(filePath.replace(inputDirPath, outputDirPath));
-                    try {
-                        weaveSingleClassToFile(file, outputFile, inputDirPath);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                });
+        if (isOpen) {
+            final String inputDirPath = inputDir.getAbsolutePath();
+            final String outputDirPath = outputDir.getAbsolutePath();
+            if (inputDir.isDirectory()) {
+                for (final File file : com.android.utils.FileUtils.getAllFiles(inputDir)) {
+                    executor.execute(() -> {
+                        String filePath = file.getAbsolutePath();
+                        File outputFile = new File(filePath.replace(inputDirPath, outputDirPath));
+                        try {
+                            weaveSingleClassToFile(file, outputFile, inputDirPath);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    });
+                }
             }
+        } else {
+            executor.execute(() -> {
+                try {
+                    FileUtils.copyDirectory(inputDir, outputDir);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            });
         }
     }
 
@@ -203,14 +193,10 @@ public class TemplateTransform extends Transform {
         });
     }
 
-
-    /**
-     * @param isHandle 是否要处理，false 不处理，直接拷贝
-     */
-    private void handleJarInput(final File srcJar, final File destJar, boolean isHandle) {
+    private void handleJarInput(final File srcJar, final File destJar) {
         executor.execute(() -> {
             try {
-                if (isHandle) {
+                if (isOpen) {
                     weaveJar(srcJar, destJar);
                 } else {
                     FileUtils.copyFile(srcJar, destJar);
@@ -220,7 +206,6 @@ public class TemplateTransform extends Transform {
             }
         });
     }
-
 
     private void weaveJar(File inputJar, File outputJar) throws IOException {
         ZipFile inputZip = new ZipFile(inputJar);
@@ -301,9 +286,29 @@ public class TemplateTransform extends Transform {
         }
     }
 
-    private void log(final String message) {
-        LogM.log(message);
-        mLogger.info(message);
+    @Override
+    public String getName() {
+        return this.getClass().getSimpleName();
+    }
+
+    @Override
+    public Set<QualifiedContent.ContentType> getInputTypes() {
+        return TransformManager.CONTENT_CLASS;
+    }
+
+    @Override
+    public Set<? super QualifiedContent.Scope> getScopes() {
+        return TransformManager.SCOPE_FULL_PROJECT;
+    }
+
+    @Override
+    public boolean isIncremental() {
+        return true;
+    }
+
+    @Override
+    public boolean isCacheable() {
+        return true;
     }
 
 }

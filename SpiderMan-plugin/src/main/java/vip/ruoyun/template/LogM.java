@@ -3,7 +3,9 @@ package vip.ruoyun.template;
 public class LogM {
 
     public static void log(Object log) {
-        System.out.println(log);
+        if (ConstantValue.isLog) {
+            System.out.println(log);
+        }
     }
 
 }

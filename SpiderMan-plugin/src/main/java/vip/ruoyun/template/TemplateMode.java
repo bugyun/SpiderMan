@@ -2,9 +2,9 @@ package vip.ruoyun.template;
 
 public class TemplateMode {
 
-    private boolean isOpen;
+    public boolean isOpen;
 
-    private boolean isLog;
+    public boolean isLog;
 
     public boolean isOpen() {
         return isOpen;
@@ -20,5 +20,13 @@ public class TemplateMode {
 
     public void setLog(final boolean log) {
         isLog = log;
+    }
+
+    @Override
+    public String toString() {
+        return "TemplateMode{" +
+                "isOpen=" + isOpen +
+                ", isLog=" + isLog +
+                '}';
     }
 }

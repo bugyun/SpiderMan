@@ -17,8 +17,8 @@ public class TemplatePlugin implements Plugin<Project> {
             throw new GradleException("SpiderManPlugin: Android Application plugin required");
         }
 
-        project.getExtensions().create("templateMode", TemplateMode.class);
+        TemplateMode templateMode = project.getExtensions().create("templateMode", TemplateMode.class);
         AppExtension appExtension = project.getExtensions().getByType(AppExtension.class);
-        appExtension.registerTransform(new TemplateTransform(project), Collections.EMPTY_LIST);
+        appExtension.registerTransform(new TemplateTransform(project, templateMode), Collections.EMPTY_LIST);
     }
 }
