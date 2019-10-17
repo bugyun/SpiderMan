@@ -13,7 +13,6 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-//    @TestAnnotation("你好")
     public void test(String string) {
 
     }

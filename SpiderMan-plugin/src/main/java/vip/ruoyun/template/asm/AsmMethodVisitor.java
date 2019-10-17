@@ -39,6 +39,10 @@ public class AsmMethodVisitor extends AdviceAdapter {
         LogM.log("onMethodEnter");
         //当方法进去的时候，判断这个方法是否
         if ("test".equals(methodName) && "(Ljava/lang/String;)V".equals(methodDes)) {
+
+            AnnotationVisitor annotationVisitor = mv.visitAnnotation("Lvip/ruoyun/track/demo/TestAnnotation;", true);
+            annotationVisitor.visit("value", "我是注解");
+
             LogM.log("test 方法begin");
             mv.visitFieldInsn(GETSTATIC, "java/lang/System", "out", "Ljava/io/PrintStream;");
             mv.visitVarInsn(ALOAD, 1);
