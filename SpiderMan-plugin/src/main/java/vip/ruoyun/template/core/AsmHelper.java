@@ -6,9 +6,9 @@ import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
 import vip.ruoyun.template.asm.AsmClassVisitor;
 
-public class AsmHelper {
+class AsmHelper {
 
-    public static byte[] weaveSingleClassToByteArray(InputStream inputStream) throws IOException {
+    static byte[] readSingleClassToByteArray(InputStream inputStream) throws IOException {
         //开始处理，通过 ASM
         ClassReader classReader = new ClassReader(inputStream);
         //writer
@@ -21,7 +21,7 @@ public class AsmHelper {
         return classWriter.toByteArray();
     }
 
-    public static boolean isWeavableClass(String fullQualifiedClassName) {
+    static boolean canReadableClass(String fullQualifiedClassName) {
         return fullQualifiedClassName.endsWith(".class") && !fullQualifiedClassName.contains("R$")
                 && !fullQualifiedClassName.contains("R.class") && !fullQualifiedClassName
                 .contains("BuildConfig.class");

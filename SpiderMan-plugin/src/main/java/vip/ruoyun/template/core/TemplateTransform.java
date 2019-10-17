@@ -1,18 +1,26 @@
 package vip.ruoyun.template.core;
 
-import com.android.build.api.transform.*;
+import com.android.build.api.transform.DirectoryInput;
+import com.android.build.api.transform.Format;
+import com.android.build.api.transform.JarInput;
+import com.android.build.api.transform.QualifiedContent;
+import com.android.build.api.transform.Status;
+import com.android.build.api.transform.Transform;
+import com.android.build.api.transform.TransformException;
+import com.android.build.api.transform.TransformInput;
+import com.android.build.api.transform.TransformInvocation;
+import com.android.build.api.transform.TransformOutputProvider;
 import com.android.build.gradle.internal.pipeline.TransformManager;
 import com.google.common.io.Files;
-import org.apache.commons.io.FileUtils;
-import org.gradle.api.Project;
-
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.TimeUnit;
-
+import org.apache.commons.io.FileUtils;
+import org.gradle.api.Project;
 import vip.ruoyun.template.constant.ConstantValue;
 import vip.ruoyun.template.ext.TemplateExt;
 import vip.ruoyun.template.utils.LogM;
@@ -33,6 +41,7 @@ public class TemplateTransform extends Transform {
         this.templateMode = templateMode;//LogM.log(templateMode.toString());//在这里还获取不到变量的值
     }
 
+    @SuppressWarnings("all")
     @Override
     public void transform(final TransformInvocation transformInvocation)
             throws TransformException, InterruptedException, IOException {
@@ -47,12 +56,8 @@ public class TemplateTransform extends Transform {
                 .getOutputProvider();//OutputProvider管理输出路径，如果消费型输入为空，你会发现OutputProvider == null
         boolean isIncremental = transformInvocation.isIncremental();  //当前是否是增量编译
         if (!isIncremental) {//如果不是自动增长,就删除文件 DexBuilderFolder 和 OutputFolder
-            executor.execute(() -> {
-                HandleHelper.cleanDexBuilderFolder(project.getBuildDir().getAbsolutePath());
-            });
-            executor.execute(() -> {
-                HandleHelper.cleanOutputFolder(outputProvider);
-            });
+            executor.execute(() -> HandleHelper.cleanDexBuilderFolder(project.getBuildDir().getAbsolutePath()));
+            executor.execute(() -> HandleHelper.cleanOutputFolder(outputProvider));
             executor.awaitQuiescence(1, TimeUnit.MINUTES);
         }
 

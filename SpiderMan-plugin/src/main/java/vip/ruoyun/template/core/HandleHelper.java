@@ -21,12 +21,12 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import vip.ruoyun.template.utils.LogM;
 
-public class HandleHelper {
+class HandleHelper {
 
     /**
      * 处理 intermediates/transforms/dexBuilder 文件
      */
-    public static void cleanDexBuilderFolder(String filePath) {
+    static void cleanDexBuilderFolder(String filePath) {
         Path path = Paths.get(filePath, AndroidProject.FD_INTERMEDIATES, "transforms",
                 "dexBuilder");
         LogM.log("cleanDexBuilderFolder:" + path.toString());
@@ -43,7 +43,7 @@ public class HandleHelper {
     /**
      * 删除 OutputFolder 的文件
      */
-    public static void cleanOutputFolder(final TransformOutputProvider outputProvider) {
+    static void cleanOutputFolder(final TransformOutputProvider outputProvider) {
         try {
             outputProvider.deleteAll();
         } catch (IOException e) {
@@ -56,7 +56,7 @@ public class HandleHelper {
     /**
      * 处理 jar 文件
      */
-    public static void handleJar(File inputJar, File outputJar) throws IOException {
+    static void handleJar(File inputJar, File outputJar) throws IOException {
         ZipFile inputZip = new ZipFile(inputJar);
         ZipOutputStream outputZip = new ZipOutputStream(new BufferedOutputStream(
                 java.nio.file.Files.newOutputStream(outputJar.toPath())));
@@ -68,10 +68,10 @@ public class HandleHelper {
             ZipEntry outEntry = new ZipEntry(entry.getName());
             byte[] newEntryContent;
             // seperator of entry name is always '/', even in windows
-            if (!AsmHelper.isWeavableClass(outEntry.getName().replace("/", "."))) {
+            if (!AsmHelper.canReadableClass(outEntry.getName().replace("/", "."))) {
                 newEntryContent = IOUtils.toByteArray(originalFile);
             } else {
-                newEntryContent = AsmHelper.weaveSingleClassToByteArray(originalFile);
+                newEntryContent = AsmHelper.readSingleClassToByteArray(originalFile);
             }
             CRC32 crc32 = new CRC32();
             crc32.update(newEntryContent, 0, newEntryContent.length);
@@ -95,15 +95,15 @@ public class HandleHelper {
     /**
      * 处理单个文件
      */
-    public static void handleSingleClassToFile(File inputFile, File outputFile, String inputBaseDir)
+    static void handleSingleClassToFile(File inputFile, File outputFile, String inputBaseDir)
             throws IOException {
         if (!inputBaseDir.endsWith(FILE_SEP)) {
             inputBaseDir = inputBaseDir + FILE_SEP;
         }
-        if (AsmHelper.isWeavableClass(inputFile.getAbsolutePath().replace(inputBaseDir, "").replace(FILE_SEP, "."))) {
+        if (AsmHelper.canReadableClass(inputFile.getAbsolutePath().replace(inputBaseDir, "").replace(FILE_SEP, "."))) {
             org.apache.commons.io.FileUtils.touch(outputFile);
             InputStream inputStream = new FileInputStream(inputFile);
-            byte[] bytes = AsmHelper.weaveSingleClassToByteArray(inputStream);
+            byte[] bytes = AsmHelper.readSingleClassToByteArray(inputStream);
             FileOutputStream fos = new FileOutputStream(outputFile);
             fos.write(bytes);
             fos.close();

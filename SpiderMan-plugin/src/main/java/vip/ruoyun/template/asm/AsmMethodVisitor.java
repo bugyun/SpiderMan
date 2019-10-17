@@ -11,7 +11,7 @@ public class AsmMethodVisitor extends AdviceAdapter {
 
     private String methodDes;
 
-    public AsmMethodVisitor(int api, MethodVisitor mv, int access, String name, String desc) {
+    AsmMethodVisitor(int api, MethodVisitor mv, int access, String name, String desc) {
         super(api, mv, access, name, desc);
         methodName = name;
         methodDes = desc;
@@ -55,11 +55,7 @@ public class AsmMethodVisitor extends AdviceAdapter {
     //                annotationVisitor0.visitEnd();
     public static class MyAnnotationVisitor extends AnnotationVisitor {
 
-        public MyAnnotationVisitor(final int api) {
-            super(api);
-        }
-
-        public MyAnnotationVisitor(final int api, final AnnotationVisitor annotationVisitor) {
+        MyAnnotationVisitor(final int api, final AnnotationVisitor annotationVisitor) {
             super(api, annotationVisitor);
         }
 

@@ -1,9 +1,7 @@
 package vip.ruoyun.template;
 
 import com.android.build.gradle.AppExtension;
-
 import java.util.Collections;
-
 import org.gradle.api.GradleException;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
