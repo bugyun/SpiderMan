@@ -11,6 +11,9 @@ public class AsmMethodVisitor extends AdviceAdapter {
 
     private String methodDes;
 
+    private String annotationValue = "";
+
+
     AsmMethodVisitor(int api, MethodVisitor mv, int access, String name, String desc) {
         super(api, mv, access, name, desc);
         methodName = name;
@@ -23,7 +26,7 @@ public class AsmMethodVisitor extends AdviceAdapter {
     public AnnotationVisitor visitAnnotation(String desc, boolean visible) {
         LogM.log("visitAnnotation：begin");
         LogM.log(desc + visible);
-        return new MyAnnotationVisitor(api, super.visitAnnotation(desc, visible));
+        return new MethodAnnotationVisitor(api, super.visitAnnotation(desc, visible));
     }
 
 
@@ -40,7 +43,12 @@ public class AsmMethodVisitor extends AdviceAdapter {
             mv.visitFieldInsn(GETSTATIC, "java/lang/System", "out", "Ljava/io/PrintStream;");
             mv.visitVarInsn(ALOAD, 1);
             mv.visitMethodInsn(INVOKEVIRTUAL, "java/io/PrintStream", "println", "(Ljava/lang/String;)V", false);
+
+            mv.visitFieldInsn(GETSTATIC, "java/lang/System", "out", "Ljava/io/PrintStream;");
+            mv.visitLdcInsn(annotationValue);
+            mv.visitMethodInsn(INVOKEVIRTUAL, "java/io/PrintStream", "println", "(Ljava/lang/String;)V", false);
             LogM.log("test 方法end");
+
         }
     }
 
@@ -53,9 +61,9 @@ public class AsmMethodVisitor extends AdviceAdapter {
     //annotationVisitor0 = methodVisitor.visitAnnotation("Lvip/ruoyun/java/TestAnnotation;", true);
     //                annotationVisitor0.visit("value", "\u65b9\u6cd5");
     //                annotationVisitor0.visitEnd();
-    public static class MyAnnotationVisitor extends AnnotationVisitor {
+    private class MethodAnnotationVisitor extends AnnotationVisitor {
 
-        MyAnnotationVisitor(final int api, final AnnotationVisitor annotationVisitor) {
+        MethodAnnotationVisitor(final int api, final AnnotationVisitor annotationVisitor) {
             super(api, annotationVisitor);
         }
 
@@ -64,6 +72,9 @@ public class AsmMethodVisitor extends AdviceAdapter {
             super.visit(name, value);
             LogM.log("name: " + name);
             LogM.log("value: " + value);
+            if (value != null) {
+                annotationValue = value.toString();
+            }
         }
 
         @Override

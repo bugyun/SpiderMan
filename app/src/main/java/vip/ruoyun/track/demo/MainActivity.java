@@ -3,6 +3,7 @@ package vip.ruoyun.track.demo;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 
+@TestAnnotation("MainActivity")
 public class MainActivity extends AppCompatActivity {
 
     @Override
@@ -12,14 +13,13 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+//    @TestAnnotation("你好")
     public void test(String string) {
 
     }
 
+    @TestAnnotation("方法")
     public void test01(String string) {
-
-
-
 
     }
 

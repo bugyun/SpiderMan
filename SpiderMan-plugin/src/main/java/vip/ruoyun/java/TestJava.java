@@ -8,16 +8,41 @@ public class TestJava {
 
     @TestAnnotation("方法")
     public void test(String string) {
+
 //        System.out.println(string);
 
-//        try {
-//            final Method test = getClass().getDeclaredMethod("test");
-//            final TestAnnotation annotation = test.getAnnotation(TestAnnotation.class);
-//            annotation.value();
-//
-//        } catch (NoSuchMethodException e) {
-//            e.printStackTrace();
-//        }
+        String name = "测试";
+//        System.out.println(string + name);
+
+        //栈
+        //this 第一个变量
+        //string 第二个变量
+        //name 第三个变量
+        print(string, name);
+
+        //栈
+        //this 第一个变量
+        //name 第二个变量
+        print(name);
+
+        try {
+            final Method test = getClass().getDeclaredMethod("test");
+            final TestAnnotation annotation = test.getAnnotation(TestAnnotation.class);
+            annotation.value();
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void print(String s1, String s2) {
+
+    }
+
+    //methodVisitor.visitFieldInsn(GETSTATIC, "java/lang/System", "out", "Ljava/io/PrintStream;");
+    //methodVisitor.visitLdcInsn("123");
+    //methodVisitor.visitMethodInsn(INVOKEVIRTUAL, "java/io/PrintStream", "println", "(Ljava/lang/String;)V", false);
+    public void print(String s2) {
+        System.out.println("123");
     }
 
     //// access flags 0x1

@@ -9,6 +9,8 @@ import vip.ruoyun.template.utils.LogM;
 
 public class AsmClassVisitor extends ClassVisitor {
 
+    private String annotationValue = "";
+
     public AsmClassVisitor(ClassVisitor classVisitor) {
         super(Opcodes.ASM7, classVisitor);
     }
@@ -29,7 +31,7 @@ public class AsmClassVisitor extends ClassVisitor {
     public AnnotationVisitor visitAnnotation(String desc, boolean visible) {
         LogM.log("=====---------- visitAnnotation ----------=====");
         LogM.log(desc);
-        return super.visitAnnotation(desc, visible);
+        return new ClassAnnotationVisitor(api, super.visitAnnotation(desc, visible));
     }
 
     @Override
@@ -43,6 +45,34 @@ public class AsmClassVisitor extends ClassVisitor {
     public void visitEnd() {
         super.visitEnd();
         LogM.log("=====---------- visitEnd ----------=====");
+    }
+
+
+    //annotationVisitor0 = methodVisitor.visitAnnotation("Lvip/ruoyun/java/TestAnnotation;", true);
+    //                annotationVisitor0.visit("value", "\u65b9\u6cd5");
+    //                annotationVisitor0.visitEnd();
+    //类上的注解
+    public class ClassAnnotationVisitor extends AnnotationVisitor {
+
+        ClassAnnotationVisitor(final int api, final AnnotationVisitor annotationVisitor) {
+            super(api, annotationVisitor);
+        }
+
+        @Override
+        public void visit(final String name, final Object value) {
+            super.visit(name, value);
+            LogM.log("name: " + name);
+            LogM.log("value: " + value);
+            if (value != null) {
+                annotationValue = value.toString();
+            }
+        }
+
+        @Override
+        public void visitEnd() {
+            super.visitEnd();
+            LogM.log("visitAnnotation：end");
+        }
     }
 
 }
