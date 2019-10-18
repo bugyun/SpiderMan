@@ -90,8 +90,10 @@ public class TemplateTransform extends Transform {
             }
 
             for (DirectoryInput directoryInput : input.getDirectoryInputs()) {
-                File dest = outputProvider.getContentLocation(directoryInput.getName(),
-                        directoryInput.getContentTypes(), directoryInput.getScopes(),
+                File dest = outputProvider.getContentLocation(
+                        directoryInput.getName(),
+                        directoryInput.getContentTypes(),
+                        directoryInput.getScopes(),
                         Format.DIRECTORY);
                 FileUtils.forceMkdir(dest);//创建文件夹
                 if (isIncremental) {
@@ -144,7 +146,7 @@ public class TemplateTransform extends Transform {
                         String filePath = file.getAbsolutePath();
                         File outputFile = new File(filePath.replace(inputDirPath, outputDirPath));
                         try {
-                            HandleHelper.handleSingleClassToFile(file, outputFile, inputDirPath);
+                            HandleHelper.handleSingleClassToFile(file, outputFile, inputDirPath, isOpen);
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
@@ -165,7 +167,7 @@ public class TemplateTransform extends Transform {
     private void handleSingleFile(final File inputFile, final File destFile, final String srcDirPath) {
         executor.execute(() -> {
             try {
-                HandleHelper.handleSingleClassToFile(inputFile, destFile, srcDirPath);
+                HandleHelper.handleSingleClassToFile(inputFile, destFile, srcDirPath, isOpen);
             } catch (IOException e) {
                 e.printStackTrace();
             }

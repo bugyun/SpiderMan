@@ -1,5 +1,6 @@
 apply plugin: 'com.android.application'
 apply plugin: 'vip.ruoyun.Template'
+//apply plugin: 'vip.ruoyun.track.SpiderMan'
 
 templateMode {
     open true//打开
