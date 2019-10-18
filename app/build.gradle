@@ -3,7 +3,7 @@ apply plugin: 'vip.ruoyun.Template'
 //apply plugin: 'vip.ruoyun.track.SpiderMan'
 
 templateMode {
-    open true//打开
+    open true//打开,默认不用修改，如果先要修改请 clean project
     log false//日志
 }
 

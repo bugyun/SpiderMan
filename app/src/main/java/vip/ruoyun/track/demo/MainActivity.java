@@ -1,10 +1,11 @@
 package vip.ruoyun.track.demo;
 
+import android.view.View;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 
 @TestAnnotation("MainActivity")
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -13,9 +14,13 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-//    @TestAnnotation("你好")
-    public void test(String string) {
+    @Override
+    public void onClick(final View v) {
+        
+    }
 
+    //    @TestAnnotation("你好")
+    public void test(String string) {
 
     }
 
@@ -23,5 +28,6 @@ public class MainActivity extends AppCompatActivity {
     public void test01(String string) {
 
     }
+
 
 }
