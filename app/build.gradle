@@ -4,7 +4,7 @@ apply plugin: 'vip.ruoyun.Template'
 
 templateMode {
     open true//打开,默认不用修改，如果先要修改请 clean project
-    log false//日志
+    log true//日志
 }
 
 android {
@@ -23,6 +23,10 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
+    }
+
+    dataBinding {
+        enabled = true
     }
 }
 
