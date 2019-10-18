@@ -3,7 +3,7 @@ apply plugin: 'vip.ruoyun.Template'
 
 templateMode {
     open true//打开
-    log true//日志
+    log false//日志
 }
 
 android {

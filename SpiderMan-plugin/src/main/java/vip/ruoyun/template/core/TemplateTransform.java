@@ -46,6 +46,7 @@ public class TemplateTransform extends Transform {
     public void transform(final TransformInvocation transformInvocation)
             throws TransformException, InterruptedException, IOException {
         super.transform(transformInvocation);
+        LogM.hint("-------------------TemplatePlugin开始-------------------");
         ConstantValue.isLog = templateMode.isLog();
         ConstantValue.isOpen = templateMode.isOpen();
         this.isOpen = templateMode.isOpen();
@@ -129,7 +130,8 @@ public class TemplateTransform extends Transform {
         executor.shutdown();
         executor.awaitTermination(1, TimeUnit.MINUTES);
         long cost = (System.currentTimeMillis() - startTime) / 1000;
-        LogM.log("执行时间" + cost + "秒");
+        LogM.hint("-------------------执行时间{}秒-------------------", cost);
+        LogM.hint("-------------------TemplatePlugin结束-------------------");
     }
 
     private void handleDirectory(File inputDir, File outputDir) {

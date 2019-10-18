@@ -46,5 +46,22 @@ public class ImagePlugin implements Plugin<Project> {
         appExtension.getApplicationVariants().forEach(applicationVariant -> {
 
         });
+
+
+        //日志类型，从下面的结果看
+        project.getLogger().isInfoEnabled();
+        project.getLogger().debug("debug");
+        project.getLogger().trace("trace");
+        project.getLogger().info("info");
+        project.getLogger().warn("warn");
+        project.getLogger().error("error");
+        System.out.println("开始");
+        project.getLogger().error("-------------------TemplatePlugin开始-------------------");
+
+        //warn
+        //error
+        //-------------------TemplatePlugin开始-------------------
+        //开始
+        //-------------------TemplatePlugin开始-------------------
     }
 }
