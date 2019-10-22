@@ -58,6 +58,6 @@ public class BlankFragment extends BaseFragment {
     @Override
     public void setUserVisibleHint(final boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
-//        SpiderManTracker.setUserVisibleHint(this, isVisibleToUser);
+        SpiderManTracker.setUserVisibleHint(this, isVisibleToUser);
     }
 }

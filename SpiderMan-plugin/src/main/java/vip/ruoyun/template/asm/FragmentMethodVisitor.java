@@ -1,13 +1,13 @@
 package vip.ruoyun.template.asm;
 
+import org.objectweb.asm.MethodVisitor;
+import org.objectweb.asm.Opcodes;
+import org.objectweb.asm.commons.AdviceAdapter;
+
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
-import jdk.internal.org.objectweb.asm.Opcodes;
-import org.objectweb.asm.MethodVisitor;
-import org.objectweb.asm.commons.AdviceAdapter;
-import vip.ruoyun.template.utils.AsmUtils;
 
 /**
  * fragment 方法检测
@@ -26,14 +26,13 @@ class FragmentMethodVisitor extends AdviceAdapter {
                     "androidx/fragment/app/DialogFragment"
             ));
 
-
-    public final static HashMap<String, MethodCell> sFragmentMethods = new HashMap<>();
+    private final static HashMap<String, MethodCell> sFragmentMethods = new HashMap<>();
 
     static {
         sFragmentMethods.put("onResume()V", new MethodCell(
                 "onResume",
                 "()V",
-                "",// parent省略，均为 android/app/Fragment 或 android/support/v4/app/Fragment
+                "",
                 "trackFragmentResume",
                 "(Ljava/lang/Object;)V",
                 0, 1,
@@ -75,23 +74,51 @@ class FragmentMethodVisitor extends AdviceAdapter {
                 Collections.singletonList(Opcodes.ALOAD)));
     }
 
-
-    private final int access;
+    private final String superName;
 
     FragmentMethodVisitor(final int api, final MethodVisitor methodVisitor, final int access,
-            final String name,
-            final String descriptor) {
+                          final String name,
+                          final String descriptor, final String superName) {
         super(api, methodVisitor, access, name, descriptor);
-        this.access = access;
+        this.superName = superName;
     }
 
     @Override
     protected void onMethodEnter() {
         super.onMethodEnter();
-        if (!(AsmUtils.isPublic(access) && !AsmUtils.isStatic(access))) {
-            return;//如果不是 public 非 static 的方法，直接 return
+        switch (getName() + methodDesc) {//void test(String str) --> methodName:"test"   methodDes:"(Ljava/lang/String;)V"
+            case "onResume()V":
+            case "onPause()V":
+                mv.visitVarInsn(ALOAD, 0);
+                mv.visitMethodInsn(INVOKESTATIC, "vip/ruoyun/track/core/SpiderManTracker", "onResume",
+                        "(L" + superName + ";)V", false);
+                break;
+            case "setUserVisibleHint(Z)V":
+                mv.visitVarInsn(ALOAD, 0);
+                mv.visitVarInsn(ILOAD, 1);
+                mv.visitMethodInsn(INVOKESTATIC, "vip/ruoyun/track/core/SpiderManTracker", "setUserVisibleHint",
+                        "(L" + superName + ";Z)V", false);
+                break;
+            case "onHiddenChanged(Z)V":
+                mv.visitVarInsn(ALOAD, 0);
+                mv.visitVarInsn(ILOAD, 1);
+                mv.visitMethodInsn(INVOKESTATIC, "vip/ruoyun/track/core/SpiderManTracker", "onHiddenChanged",
+                        "(L" + superName + ";Z)V", false);
+                break;
+            default:
+                break;
         }
+    }
 
-
+    /**
+     * 问题:
+     * 当在方法体中做了一些操作,那么如果要让界面消失,那么 getView 中的状态view 的状态可能就消失了.所以关于 view 的方法必须放到前面.
+     * fragment 的话,可以放到后面,因为没有引用消失
+     *
+     * @param opcode
+     */
+    @Override
+    protected void onMethodExit(int opcode) {
+        super.onMethodExit(opcode);
     }
 }

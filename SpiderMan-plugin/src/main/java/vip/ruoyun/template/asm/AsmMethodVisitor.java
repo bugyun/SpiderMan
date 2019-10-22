@@ -3,6 +3,7 @@ package vip.ruoyun.template.asm;
 import org.objectweb.asm.AnnotationVisitor;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.commons.AdviceAdapter;
+import vip.ruoyun.template.utils.AsmUtils;
 import vip.ruoyun.template.utils.LogM;
 
 public class AsmMethodVisitor extends AdviceAdapter {
@@ -23,7 +24,6 @@ public class AsmMethodVisitor extends AdviceAdapter {
     }
 
 
-
     @Override
     public AnnotationVisitor visitAnnotation(String desc, boolean visible) {
         LogM.log("visitAnnotation：begin");
@@ -39,12 +39,9 @@ public class AsmMethodVisitor extends AdviceAdapter {
     protected void onMethodEnter() {
         super.onMethodEnter();
         LogM.log("onMethodEnter");
-
-    }
-
-    @Override
-    protected void onMethodExit(int opcode) {
-        super.onMethodExit(opcode);
+        if (!(AsmUtils.isPublic(methodAccess) && !AsmUtils.isStatic(methodAccess))) {
+            return;//如果不是 public 非 static 的方法，直接 return
+        }
         //退出之前做一些操作
         //当方法进去的时候，判断这个方法是否
         if ("test".equals(methodName) && "(Ljava/lang/String;)V".equals(methodDes)) {
@@ -63,6 +60,12 @@ public class AsmMethodVisitor extends AdviceAdapter {
             LogM.log("test 方法end");
 
         }
+    }
+
+    @Override
+    protected void onMethodExit(int opcode) {
+        super.onMethodExit(opcode);
+
 
         LogM.log("onMethodExit:" + opcode);
     }

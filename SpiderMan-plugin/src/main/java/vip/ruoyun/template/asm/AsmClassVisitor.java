@@ -3,6 +3,7 @@ package vip.ruoyun.template.asm;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
+
 import org.objectweb.asm.AnnotationVisitor;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.MethodVisitor;
@@ -32,7 +33,6 @@ public class AsmClassVisitor extends ClassVisitor {
         LogM.log("superName:" + superName);
         LogM.log("interfaces:" + Arrays.toString(interfaces));
         this.superName = superName;
-
     }
 
     @Override
@@ -47,7 +47,7 @@ public class AsmClassVisitor extends ClassVisitor {
         LogM.log("=====---------- visitMethod ----------=====");
         MethodVisitor mv = cv.visitMethod(access, name, desc, signature, exceptions);
         if (FragmentMethodVisitor.supportFragmentClassList.contains(superName)) {
-            return new FragmentMethodVisitor(api, mv, access, name, desc);
+            return new FragmentMethodVisitor(api, mv, access, name, desc, superName);
         } else {
             return new AsmMethodVisitor(api, mv, access, name, desc);
         }
@@ -63,7 +63,6 @@ public class AsmClassVisitor extends ClassVisitor {
         }
 
     }
-
 
     //annotationVisitor0 = methodVisitor.visitAnnotation("Lvip/ruoyun/java/TestAnnotation;", true);
     //                annotationVisitor0.visit("value", "\u65b9\u6cd5");
