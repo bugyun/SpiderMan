@@ -21,6 +21,9 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import vip.ruoyun.template.utils.LogM;
 
+/**
+ * 处理文件
+ */
 class HandleHelper {
 
     /**
@@ -95,12 +98,13 @@ class HandleHelper {
     /**
      * 处理单个文件
      */
-    static void handleSingleClassToFile(File inputFile, File outputFile, String inputBaseDir)
+    static void handleSingleClassToFile(File inputFile, File outputFile, String inputBaseDir, boolean isOpen)
             throws IOException {
         if (!inputBaseDir.endsWith(FILE_SEP)) {
             inputBaseDir = inputBaseDir + FILE_SEP;
         }
-        if (AsmHelper.canReadableClass(inputFile.getAbsolutePath().replace(inputBaseDir, "").replace(FILE_SEP, "."))) {
+        if (isOpen && AsmHelper
+                .canReadableClass(inputFile.getAbsolutePath().replace(inputBaseDir, "").replace(FILE_SEP, "."))) {
             org.apache.commons.io.FileUtils.touch(outputFile);
             InputStream inputStream = new FileInputStream(inputFile);
             byte[] bytes = AsmHelper.readSingleClassToByteArray(inputStream);

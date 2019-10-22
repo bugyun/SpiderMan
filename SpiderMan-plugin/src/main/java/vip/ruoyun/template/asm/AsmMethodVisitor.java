@@ -22,6 +22,8 @@ public class AsmMethodVisitor extends AdviceAdapter {
         LogM.log("methodDes: " + methodDes);
     }
 
+
+
     @Override
     public AnnotationVisitor visitAnnotation(String desc, boolean visible) {
         LogM.log("visitAnnotation：begin");
@@ -37,6 +39,13 @@ public class AsmMethodVisitor extends AdviceAdapter {
     protected void onMethodEnter() {
         super.onMethodEnter();
         LogM.log("onMethodEnter");
+
+    }
+
+    @Override
+    protected void onMethodExit(int opcode) {
+        super.onMethodExit(opcode);
+        //退出之前做一些操作
         //当方法进去的时候，判断这个方法是否
         if ("test".equals(methodName) && "(Ljava/lang/String;)V".equals(methodDes)) {
 
@@ -54,11 +63,7 @@ public class AsmMethodVisitor extends AdviceAdapter {
             LogM.log("test 方法end");
 
         }
-    }
 
-    @Override
-    protected void onMethodExit(int opcode) {
-        super.onMethodExit(opcode);
         LogM.log("onMethodExit:" + opcode);
     }
 
