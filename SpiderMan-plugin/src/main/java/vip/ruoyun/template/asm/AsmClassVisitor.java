@@ -1,6 +1,8 @@
 package vip.ruoyun.template.asm;
 
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
 import org.objectweb.asm.AnnotationVisitor;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.MethodVisitor;
@@ -9,7 +11,11 @@ import vip.ruoyun.template.utils.LogM;
 
 public class AsmClassVisitor extends ClassVisitor {
 
+    private HashSet<String> visitedFragmentMethods = new HashSet<>();
+
     private String annotationValue = "";
+
+    private String superName;
 
     public AsmClassVisitor(ClassVisitor classVisitor) {
         super(Opcodes.ASM7, classVisitor);
@@ -25,6 +31,8 @@ public class AsmClassVisitor extends ClassVisitor {
         LogM.log("signature:" + signature);
         LogM.log("superName:" + superName);
         LogM.log("interfaces:" + Arrays.toString(interfaces));
+        this.superName = superName;
+
     }
 
     @Override
@@ -38,13 +46,22 @@ public class AsmClassVisitor extends ClassVisitor {
     public MethodVisitor visitMethod(int access, String name, String desc, String signature, String[] exceptions) {
         LogM.log("=====---------- visitMethod ----------=====");
         MethodVisitor mv = cv.visitMethod(access, name, desc, signature, exceptions);
-        return new AsmMethodVisitor(api, mv, access, name, desc);
+        if (FragmentMethodVisitor.supportFragmentClassList.contains(superName)) {
+            return new FragmentMethodVisitor(api, mv, access, name, desc);
+        } else {
+            return new AsmMethodVisitor(api, mv, access, name, desc);
+        }
+//        return super.visitMethod(access, name, desc, signature, exceptions);
     }
 
     @Override
     public void visitEnd() {
         super.visitEnd();
         LogM.log("=====---------- visitEnd ----------=====");
+        if (FragmentMethodVisitor.supportFragmentClassList.contains(superName)) {
+
+        }
+
     }
 
 

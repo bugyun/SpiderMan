@@ -5,9 +5,12 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
+import vip.ruoyun.track.core.annotation.SpiderManIgnore;
+import vip.ruoyun.track.core.annotation.SpiderManPage;
 import vip.ruoyun.track.demo.databinding.ActivityMainBinding;
 
-@TestAnnotation("MainActivity")
+@SpiderManPage(name = "主界面")
+@SpiderManIgnore
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
     private ActivityMainBinding mMainBinding;
@@ -23,7 +26,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
             }
         });
-
     }
 
     @Override
@@ -34,13 +36,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     //    @TestAnnotation("你好")
     public void test(String string) {
+        System.out.println("我是第一行");
 
     }
 
     @TestAnnotation("方法")
     public void test01(String string) {
+        System.out.println("我是第一行");
 
     }
-
-
 }
