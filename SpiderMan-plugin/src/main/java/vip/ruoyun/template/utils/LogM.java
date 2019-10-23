@@ -15,6 +15,12 @@ public class LogM {
         }
     }
 
+    public static void log(String var1, Object var2) {
+        if (ConstantValue.isLog) {
+            mLogger.warn(var1, var2);
+        }
+    }
+
     public static void hint(String log) {
         mLogger.error(log);
     }

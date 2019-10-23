@@ -45,13 +45,13 @@ public class TemplateTransform extends Transform {
     @Override
     public void transform(final TransformInvocation transformInvocation)
             throws TransformException, InterruptedException, IOException {
-        super.transform(transformInvocation);
         LogM.hint("-------------------TemplatePlugin开始-------------------");
+        long startTime = System.currentTimeMillis();
         ConstantValue.isLog = templateMode.isLog();
         ConstantValue.isOpen = templateMode.isOpen();
         this.isOpen = templateMode.isOpen();
         LogM.log(templateMode.toString());
-        long startTime = System.currentTimeMillis();
+        super.transform(transformInvocation);
         Collection<TransformInput> inputs = transformInvocation.getInputs();//消费型输入，可以从中获取jar包和class文件夹路径。需要输出给下一个任务
         TransformOutputProvider outputProvider = transformInvocation
                 .getOutputProvider();//OutputProvider管理输出路径，如果消费型输入为空，你会发现OutputProvider == null

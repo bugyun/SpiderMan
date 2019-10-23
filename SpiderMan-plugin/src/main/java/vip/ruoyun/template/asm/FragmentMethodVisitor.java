@@ -77,45 +77,53 @@ class FragmentMethodVisitor extends AdviceAdapter {
     private final String superName;
 
     FragmentMethodVisitor(final int api, final MethodVisitor methodVisitor, final int access,
-                          final String name,
-                          final String descriptor, final String superName) {
+            final String name,
+            final String descriptor, final String superName) {
         super(api, methodVisitor, access, name, descriptor);
         this.superName = superName;
+    }
+
+
+    @Override
+    public void visitMethodInsn(final int opcode, final String owner, final String name, final String descriptor,
+            final boolean isInterface) {
+        super.visitMethodInsn(opcode, owner, name, descriptor, isInterface);
+        if (opcode == INVOKESPECIAL && owner.equals(superName)) { //super()方法之后，写入方法
+            switch (getName() + methodDesc) {
+                //void test(String str) --> methodName:"test"   methodDes:"(Ljava/lang/String;)V"
+                case "onResume()V":
+                case "onPause()V":
+                    mv.visitVarInsn(ALOAD, 0);
+                    mv.visitMethodInsn(INVOKESTATIC, "vip/ruoyun/track/core/SpiderManTracker", "onResume",
+                            "(L" + superName + ";)V", false);
+                    break;
+                case "setUserVisibleHint(Z)V":
+                    mv.visitVarInsn(ALOAD, 0);
+                    mv.visitVarInsn(ILOAD, 1);
+                    mv.visitMethodInsn(INVOKESTATIC, "vip/ruoyun/track/core/SpiderManTracker", "setUserVisibleHint",
+                            "(L" + superName + ";Z)V", false);
+                    break;
+                case "onHiddenChanged(Z)V":
+                    mv.visitVarInsn(ALOAD, 0);
+                    mv.visitVarInsn(ILOAD, 1);
+                    mv.visitMethodInsn(INVOKESTATIC, "vip/ruoyun/track/core/SpiderManTracker", "onHiddenChanged",
+                            "(L" + superName + ";Z)V", false);
+                    break;
+                default:
+                    break;
+            }
+        }
     }
 
     @Override
     protected void onMethodEnter() {
         super.onMethodEnter();
-        switch (getName() + methodDesc) {//void test(String str) --> methodName:"test"   methodDes:"(Ljava/lang/String;)V"
-            case "onResume()V":
-            case "onPause()V":
-                mv.visitVarInsn(ALOAD, 0);
-                mv.visitMethodInsn(INVOKESTATIC, "vip/ruoyun/track/core/SpiderManTracker", "onResume",
-                        "(L" + superName + ";)V", false);
-                break;
-            case "setUserVisibleHint(Z)V":
-                mv.visitVarInsn(ALOAD, 0);
-                mv.visitVarInsn(ILOAD, 1);
-                mv.visitMethodInsn(INVOKESTATIC, "vip/ruoyun/track/core/SpiderManTracker", "setUserVisibleHint",
-                        "(L" + superName + ";Z)V", false);
-                break;
-            case "onHiddenChanged(Z)V":
-                mv.visitVarInsn(ALOAD, 0);
-                mv.visitVarInsn(ILOAD, 1);
-                mv.visitMethodInsn(INVOKESTATIC, "vip/ruoyun/track/core/SpiderManTracker", "onHiddenChanged",
-                        "(L" + superName + ";Z)V", false);
-                break;
-            default:
-                break;
-        }
     }
 
     /**
      * 问题:
      * 当在方法体中做了一些操作,那么如果要让界面消失,那么 getView 中的状态view 的状态可能就消失了.所以关于 view 的方法必须放到前面.
      * fragment 的话,可以放到后面,因为没有引用消失
-     *
-     * @param opcode
      */
     @Override
     protected void onMethodExit(int opcode) {
