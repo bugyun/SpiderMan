@@ -62,7 +62,7 @@ public class FragmentConfig implements Opcodes {
             ).build();
 
 
-    public static void fragmentMethod(String methodName, String superName, final MethodVisitor mv) {
+    public static boolean fragmentMethod(String methodName, String superName, final MethodVisitor mv) {
         MethodCell methodCell = sFragmentMethods.get(methodName);
         if (methodCell != null) {
             for (int i = 0; i < methodCell.opcodes.length; i++) {
@@ -75,7 +75,9 @@ public class FragmentConfig implements Opcodes {
                     methodCell.agentName,
                     methodCell.agentDesc.replace("##", "L" + superName + ";"),
                     false);
+            return true;
         }
+        return false;
     }
 
 

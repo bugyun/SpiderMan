@@ -57,8 +57,9 @@ class FragmentMethodVisitor extends AdviceAdapter {
             return;
         }
         String methodName = getName() + methodDesc;
-        FragmentConfig.fragmentMethod(methodName, superName, mv);
+        if (FragmentConfig.fragmentMethod(methodName, superName, mv)) {
+            visitedFragmentMethods.add(methodName);
+        }
         isWrite = true;
-        visitedFragmentMethods.add(methodName);
     }
 }
