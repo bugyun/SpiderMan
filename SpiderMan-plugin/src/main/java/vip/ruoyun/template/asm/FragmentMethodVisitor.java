@@ -1,5 +1,6 @@
 package vip.ruoyun.template.asm;
 
+import java.util.HashSet;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.commons.AdviceAdapter;
@@ -26,7 +27,7 @@ class FragmentMethodVisitor extends AdviceAdapter {
                     "androidx/fragment/app/DialogFragment"
             ));
 
-    private final static HashMap<String, MethodCell> sFragmentMethods = new HashMap<>();
+    final static HashMap<String, MethodCell> sFragmentMethods = new HashMap<>();
 
     static {
         sFragmentMethods.put("onResume()V", new MethodCell(
@@ -55,15 +56,14 @@ class FragmentMethodVisitor extends AdviceAdapter {
                 "(Ljava/lang/Object;Z)V",
                 0, 2,
                 Arrays.asList(Opcodes.ALOAD, Opcodes.ILOAD)));
-        sFragmentMethods.put("onViewCreated(Landroid/view/View;Landroid/os/Bundle;)V", new MethodCell(
-                "onViewCreated",
-                "(Landroid/view/View;Landroid/os/Bundle;)V",
-                "",
-                "onFragmentViewCreated",
-                "(Ljava/lang/Object;Landroid/view/View;Landroid/os/Bundle;)V",
-                0, 3,
-                Arrays.asList(Opcodes.ALOAD, Opcodes.ALOAD, Opcodes.ILOAD)));
-
+//        sFragmentMethods.put("onViewCreated(Landroid/view/View;Landroid/os/Bundle;)V", new MethodCell(
+//                "onViewCreated",
+//                "(Landroid/view/View;Landroid/os/Bundle;)V",
+//                "",
+//                "onFragmentViewCreated",
+//                "(Ljava/lang/Object;Landroid/view/View;Landroid/os/Bundle;)V",
+//                0, 3,
+//                Arrays.asList(Opcodes.ALOAD, Opcodes.ALOAD, Opcodes.ILOAD)));
         sFragmentMethods.put("onDestroy()V", new MethodCell(
                 "onDestroy",
                 "()V",
@@ -76,11 +76,17 @@ class FragmentMethodVisitor extends AdviceAdapter {
 
     private final String superName;
 
+    private boolean isWrite = false;
+
+    private HashSet<String> visitedFragmentMethods;
+
     FragmentMethodVisitor(final int api, final MethodVisitor methodVisitor, final int access,
             final String name,
-            final String descriptor, final String superName) {
+            final String descriptor, final String superName,
+            final HashSet<String> visitedFragmentMethods) {
         super(api, methodVisitor, access, name, descriptor);
         this.superName = superName;
+        this.visitedFragmentMethods = visitedFragmentMethods;
     }
 
 
@@ -89,29 +95,7 @@ class FragmentMethodVisitor extends AdviceAdapter {
             final boolean isInterface) {
         super.visitMethodInsn(opcode, owner, name, descriptor, isInterface);
         if (opcode == INVOKESPECIAL && owner.equals(superName)) { //super()方法之后，写入方法
-            switch (getName() + methodDesc) {
-                //void test(String str) --> methodName:"test"   methodDes:"(Ljava/lang/String;)V"
-                case "onResume()V":
-                case "onPause()V":
-                    mv.visitVarInsn(ALOAD, 0);
-                    mv.visitMethodInsn(INVOKESTATIC, "vip/ruoyun/track/core/SpiderManTracker", "onResume",
-                            "(L" + superName + ";)V", false);
-                    break;
-                case "setUserVisibleHint(Z)V":
-                    mv.visitVarInsn(ALOAD, 0);
-                    mv.visitVarInsn(ILOAD, 1);
-                    mv.visitMethodInsn(INVOKESTATIC, "vip/ruoyun/track/core/SpiderManTracker", "setUserVisibleHint",
-                            "(L" + superName + ";Z)V", false);
-                    break;
-                case "onHiddenChanged(Z)V":
-                    mv.visitVarInsn(ALOAD, 0);
-                    mv.visitVarInsn(ILOAD, 1);
-                    mv.visitMethodInsn(INVOKESTATIC, "vip/ruoyun/track/core/SpiderManTracker", "onHiddenChanged",
-                            "(L" + superName + ";Z)V", false);
-                    break;
-                default:
-                    break;
-            }
+            write();
         }
     }
 
@@ -128,5 +112,49 @@ class FragmentMethodVisitor extends AdviceAdapter {
     @Override
     protected void onMethodExit(int opcode) {
         super.onMethodExit(opcode);
+        write();
     }
+
+    private void write() {
+        String methodName = getName() + methodDesc;
+        switch (methodName) {//如果没有 super() 方法的话，就在直接写入
+            //void test(String str) --> methodName:"test"   methodDes:"(Ljava/lang/String;)V"
+            case "onResume()V":
+            case "onPause()V":
+                if (isWrite) {
+                    return;
+                }
+                mv.visitVarInsn(ALOAD, 0);
+                mv.visitMethodInsn(INVOKESTATIC, "vip/ruoyun/track/core/SpiderManTracker", "onResume",
+                        "(L" + superName + ";)V", false);
+                isWrite = true;
+                visitedFragmentMethods.add(methodName);
+                break;
+            case "setUserVisibleHint(Z)V":
+                if (isWrite) {
+                    return;
+                }
+                mv.visitVarInsn(ALOAD, 0);
+                mv.visitVarInsn(ILOAD, 1);
+                mv.visitMethodInsn(INVOKESTATIC, "vip/ruoyun/track/core/SpiderManTracker", "setUserVisibleHint",
+                        "(L" + superName + ";Z)V", false);
+                isWrite = true;
+                visitedFragmentMethods.add(methodName);
+                break;
+            case "onHiddenChanged(Z)V":
+                if (isWrite) {
+                    return;
+                }
+                mv.visitVarInsn(ALOAD, 0);
+                mv.visitVarInsn(ILOAD, 1);
+                mv.visitMethodInsn(INVOKESTATIC, "vip/ruoyun/track/core/SpiderManTracker", "onHiddenChanged",
+                        "(L" + superName + ";Z)V", false);
+                isWrite = true;
+                visitedFragmentMethods.add(methodName);
+                break;
+            default:
+                break;
+        }
+    }
+
 }

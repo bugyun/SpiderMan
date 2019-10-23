@@ -60,4 +60,10 @@ public class BlankFragment extends BaseFragment {
         super.setUserVisibleHint(isVisibleToUser);
         SpiderManTracker.setUserVisibleHint(this, isVisibleToUser);
     }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        SpiderManTracker.onDestroy(this);
+    }
 }

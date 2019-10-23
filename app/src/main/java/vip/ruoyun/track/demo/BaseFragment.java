@@ -30,7 +30,7 @@ public class BaseFragment extends Fragment {
 
     @Override
     public void onHiddenChanged(final boolean hidden) {
-        super.onHiddenChanged(hidden);
+//        super.onHiddenChanged(hidden);
     }
 
     @Override

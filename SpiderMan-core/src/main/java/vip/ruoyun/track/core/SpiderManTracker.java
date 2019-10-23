@@ -45,6 +45,10 @@ public class SpiderManTracker {
 
     }
 
+    public static void onDestroy(Fragment fragment) {
+
+    }
+
     /**
      * fragment 的方法，用来监听 tab 切换 fragment
      */

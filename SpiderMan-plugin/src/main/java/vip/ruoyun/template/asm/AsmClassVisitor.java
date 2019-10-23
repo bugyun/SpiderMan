@@ -4,19 +4,23 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 
+import java.util.Iterator;
+import java.util.Map.Entry;
 import org.objectweb.asm.AnnotationVisitor;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import vip.ruoyun.template.utils.LogM;
 
-public class AsmClassVisitor extends ClassVisitor {
+public class AsmClassVisitor extends ClassVisitor implements Opcodes {
 
     private HashSet<String> visitedFragmentMethods = new HashSet<>();
 
     private String annotationValue = "";
 
     private String superName;
+
+    private boolean isFragmentVisitor = false;
 
     public AsmClassVisitor(ClassVisitor classVisitor) {
         super(Opcodes.ASM7, classVisitor);
@@ -33,6 +37,9 @@ public class AsmClassVisitor extends ClassVisitor {
         LogM.log("superName:" + superName);
         LogM.log("interfaces:" + Arrays.toString(interfaces));
         this.superName = superName;
+        if (FragmentMethodVisitor.supportFragmentClassList.contains(superName)) {
+            isFragmentVisitor = true;
+        }
     }
 
     @Override
@@ -46,22 +53,38 @@ public class AsmClassVisitor extends ClassVisitor {
     public MethodVisitor visitMethod(int access, String name, String desc, String signature, String[] exceptions) {
         LogM.log("=====---------- visitMethod ----------=====");
         MethodVisitor mv = cv.visitMethod(access, name, desc, signature, exceptions);
-        if (FragmentMethodVisitor.supportFragmentClassList.contains(superName)) {
-            return new FragmentMethodVisitor(api, mv, access, name, desc, superName);
+        if (isFragmentVisitor) {
+            return new FragmentMethodVisitor(api, mv, access, name, desc, superName, visitedFragmentMethods);
         } else {
             return new AsmMethodVisitor(api, mv, access, name, desc);
         }
-//        return super.visitMethod(access, name, desc, signature, exceptions);
+        //return super.visitMethod(access, name, desc, signature, exceptions);
     }
 
     @Override
     public void visitEnd() {
         super.visitEnd();
         LogM.log("=====---------- visitEnd ----------=====");
-        if (FragmentMethodVisitor.supportFragmentClassList.contains(superName)) {
-
+        if (isFragmentVisitor) {
+            for (final Entry<String, MethodCell> next : FragmentMethodVisitor.sFragmentMethods.entrySet()) {
+                LogM.hint("=====---------- test...{} , {}----------=====", next.getKey(), next.getValue());
+                if (!visitedFragmentMethods.contains(next.getKey())) {
+                    MethodCell value = next.getValue();
+                    MethodVisitor methodVisitor = cv.visitMethod(ACC_PUBLIC, "onDestroy", "()V", null, null);
+                    methodVisitor.visitCode();
+                    methodVisitor.visitVarInsn(ALOAD, 0);
+                    methodVisitor.visitMethodInsn(INVOKESPECIAL, superName, "onDestroy", "()V",
+                            false);
+                    methodVisitor.visitVarInsn(ALOAD, 0);
+                    methodVisitor.visitMethodInsn(INVOKESTATIC, "vip/ruoyun/track/core/SpiderManTracker",
+                            "onDestroy",
+                            "(L" + superName + ";)V", false);
+                    methodVisitor.visitInsn(RETURN);
+                    methodVisitor.visitMaxs(1, 1);
+                    methodVisitor.visitEnd();
+                }
+            }
         }
-
     }
 
     //annotationVisitor0 = methodVisitor.visitAnnotation("Lvip/ruoyun/java/TestAnnotation;", true);
