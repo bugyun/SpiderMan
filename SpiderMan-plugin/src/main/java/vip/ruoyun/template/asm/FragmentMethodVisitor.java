@@ -2,13 +2,12 @@ package vip.ruoyun.template.asm;
 
 import java.util.HashSet;
 import org.objectweb.asm.MethodVisitor;
-import org.objectweb.asm.commons.AdviceAdapter;
 import vip.ruoyun.template.asm.config.FragmentConfig;
 
 /**
  * fragment 方法检测
  */
-class FragmentMethodVisitor extends AdviceAdapter {
+class FragmentMethodVisitor extends ViewMethodVisitor {
 
 
     private final String superName;
