@@ -1,22 +1,19 @@
 package vip.ruoyun.template.asm;
 
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 import java.util.HashSet;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.commons.AdviceAdapter;
-
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
 
 /**
  * fragment 方法检测
  */
 class FragmentMethodVisitor extends AdviceAdapter {
 
-    static final List<String> supportFragmentClassList = Collections.unmodifiableList(
-            Arrays.asList(
+    static final ImmutableList<String> supportFragmentClassList = ImmutableList.<String>builder()
+            .add(
                     //Fragment
                     "android/support/v4/app/Fragment",
                     "android/support/v4/app/ListFragment",
@@ -25,54 +22,44 @@ class FragmentMethodVisitor extends AdviceAdapter {
                     "androidx/fragment/app/Fragment",
                     "androidx/fragment/app/ListFragment",
                     "androidx/fragment/app/DialogFragment"
-            ));
+            ).build();
 
-    final static HashMap<String, MethodCell> sFragmentMethods = new HashMap<>();
-
-    static {
-        sFragmentMethods.put("onResume()V", new MethodCell(
-                "onResume",
-                "()V",
-                "",
-                "trackFragmentResume",
-                "(Ljava/lang/Object;)V",
-                0, 1,
-                Collections.singletonList(Opcodes.ALOAD)));
-
-        sFragmentMethods.put("setUserVisibleHint(Z)V", new MethodCell(
-                "setUserVisibleHint",
-                "(Z)V",
-                "",// parent省略，均为 android/app/Fragment 或 android/support/v4/app/Fragment
-                "trackFragmentSetUserVisibleHint",
-                "(Ljava/lang/Object;Z)V",
-                0, 2,
-                Arrays.asList(Opcodes.ALOAD, Opcodes.ILOAD)));
-
-        sFragmentMethods.put("onHiddenChanged(Z)V", new MethodCell(
-                "onHiddenChanged",
-                "(Z)V",
-                "",
-                "trackOnHiddenChanged",
-                "(Ljava/lang/Object;Z)V",
-                0, 2,
-                Arrays.asList(Opcodes.ALOAD, Opcodes.ILOAD)));
-//        sFragmentMethods.put("onViewCreated(Landroid/view/View;Landroid/os/Bundle;)V", new MethodCell(
-//                "onViewCreated",
-//                "(Landroid/view/View;Landroid/os/Bundle;)V",
-//                "",
-//                "onFragmentViewCreated",
-//                "(Ljava/lang/Object;Landroid/view/View;Landroid/os/Bundle;)V",
-//                0, 3,
-//                Arrays.asList(Opcodes.ALOAD, Opcodes.ALOAD, Opcodes.ILOAD)));
-        sFragmentMethods.put("onDestroy()V", new MethodCell(
-                "onDestroy",
-                "()V",
-                "",// parent省略，均为 android/app/Fragment 或 android/support/v4/app/Fragment
-                "trackFragmentDestroy",
-                "(Ljava/lang/Object;)V",
-                0, 1,
-                Collections.singletonList(Opcodes.ALOAD)));
-    }
+    final static ImmutableMap<String, MethodCell> sFragmentMethods = ImmutableMap.<String, MethodCell>builder()
+            .put("onResume()V", new MethodCell(
+                    "onResume",
+                    "()V",
+                    "trackFragmentResume",
+                    "(##)V",//Ljava/lang/Object;
+                    0,
+                    1,
+                    Opcodes.ALOAD)
+            ).put("setUserVisibleHint(Z)V", new MethodCell(
+                    "setUserVisibleHint",
+                    "(Z)V",
+                    "trackFragmentSetUserVisibleHint",
+                    "(##Z)V",//Ljava/lang/Object;
+                    0,
+                    2,
+                    Opcodes.ALOAD,
+                    Opcodes.ILOAD)
+            ).put("onHiddenChanged(Z)V", new MethodCell(
+                    "onHiddenChanged",
+                    "(Z)V",
+                    "trackOnHiddenChanged",
+                    "(##Z)V",//Ljava/lang/Object;
+                    0,
+                    2,
+                    Opcodes.ALOAD,
+                    Opcodes.ILOAD)
+            ).put("onPause()V", new MethodCell(
+                    "onPause",
+                    "()V",
+                    "onPause",
+                    "(##)V",//Ljava/lang/Object;
+                    0,
+                    1,
+                    Opcodes.ALOAD)
+            ).build();
 
     private final String superName;
 

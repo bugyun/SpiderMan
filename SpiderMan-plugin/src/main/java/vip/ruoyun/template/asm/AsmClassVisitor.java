@@ -69,22 +69,46 @@ public class AsmClassVisitor extends ClassVisitor implements Opcodes {
             for (final Entry<String, MethodCell> next : FragmentMethodVisitor.sFragmentMethods.entrySet()) {
                 LogM.hint("=====---------- test...{} , {}----------=====", next.getKey(), next.getValue());
                 if (!visitedFragmentMethods.contains(next.getKey())) {
-                    MethodCell value = next.getValue();
-                    MethodVisitor methodVisitor = cv.visitMethod(ACC_PUBLIC, "onDestroy", "()V", null, null);
-                    methodVisitor.visitCode();
-                    methodVisitor.visitVarInsn(ALOAD, 0);
-                    methodVisitor.visitMethodInsn(INVOKESPECIAL, superName, "onDestroy", "()V",
-                            false);
-                    methodVisitor.visitVarInsn(ALOAD, 0);
-                    methodVisitor.visitMethodInsn(INVOKESTATIC, "vip/ruoyun/track/core/SpiderManTracker",
-                            "onDestroy",
-                            "(L" + superName + ";)V", false);
-                    methodVisitor.visitInsn(RETURN);
-                    methodVisitor.visitMaxs(1, 1);
-                    methodVisitor.visitEnd();
+                    method(next.getValue(), cv, superName);
+//                    MethodVisitor methodVisitor = cv.visitMethod(ACC_PUBLIC, "onDestroy", "()V", null, null);
+//                    methodVisitor.visitCode();
+//                    methodVisitor.visitVarInsn(ALOAD, 0);
+//                    methodVisitor.visitMethodInsn(INVOKESPECIAL, superName, "onDestroy", "()V",
+//                            false);
+//                    methodVisitor.visitVarInsn(ALOAD, 0);
+//                    methodVisitor.visitMethodInsn(INVOKESTATIC, "vip/ruoyun/track/core/SpiderManTracker",
+//                            "onDestroy",
+//                            "(L" + superName + ";)V", false);
+//                    methodVisitor.visitInsn(RETURN);
+//                    methodVisitor.visitMaxs(1, 1);
+//                    methodVisitor.visitEnd();
                 }
             }
         }
+    }
+
+    private void method(final MethodCell methodCell, ClassVisitor cv, final String superName) {
+        MethodVisitor methodVisitor = cv
+                .visitMethod(ACC_PUBLIC, methodCell.name, methodCell.desc, null, null);
+        methodVisitor.visitCode();
+
+        for (int i = 0; i < methodCell.opcodes.length; i++) {
+            methodVisitor.visitVarInsn(methodCell.opcodes[i], methodCell.paramsStart + i);
+        }
+        //super
+        methodVisitor.visitMethodInsn(INVOKESPECIAL, superName, methodCell.name, methodCell.desc,
+                false);
+        for (int i = 0; i < methodCell.opcodes.length; i++) {
+            methodVisitor.visitVarInsn(methodCell.opcodes[i], methodCell.paramsStart + i);
+        }
+        methodVisitor.visitMethodInsn(INVOKESTATIC,
+                "vip/ruoyun/track/core/SpiderManTracker",
+                methodCell.agentName,
+                methodCell.agentDesc.replace("##", "L" + superName + ";"),
+                false);
+        methodVisitor.visitInsn(RETURN);
+        methodVisitor.visitMaxs(methodCell.opcodes.length, methodCell.opcodes.length);
+        methodVisitor.visitEnd();
     }
 
     //annotationVisitor0 = methodVisitor.visitAnnotation("Lvip/ruoyun/java/TestAnnotation;", true);

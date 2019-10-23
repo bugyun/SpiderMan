@@ -1,8 +1,27 @@
 package vip.ruoyun.template.asm;
 
-import java.util.List;
-
 public class MethodCell {
+
+    //value.name
+    //value.desc
+    //
+    //opcode 0
+    //
+    //植入的方法
+    //owner vip/ruoyun/track/core/SpiderManTracker
+    //name
+    //desc
+    //maxStack
+    //maxLocals
+
+    // methodCell.name = "onDestroy";
+    //                    methodCell.desc = "()V";
+    //                    methodCell.opcodes = {ALOAD};
+    //                    methodCell.parent = superName;
+    //                    methodCell.agentName = "vip/ruoyun/track/core/SpiderManTracker";
+    //                    methodCell.agentDesc = "(L" + superName + ";)V";
+    //                    methodCell.paramsStart = 0;
+    //                    methodCell.paramsCount = 1;
 
     // 原方法名
     final String name;
@@ -10,8 +29,6 @@ public class MethodCell {
     // 原方法描述
     final String desc;
 
-    // 方法所在的接口或类
-    final String parent;
 
     // 采集数据的方法名
     final String agentName;
@@ -26,13 +43,12 @@ public class MethodCell {
     final int paramsCount;
 
     // 参数类型对应的ASM指令，加载不同类型的参数需要不同的指令
-    final List<Integer> opcodes;
+    final int[] opcodes;
 
-    MethodCell(String name, String desc, String parent, String agentName, String agentDesc, int paramsStart,
-            int paramsCount, List<Integer> opcodes) {
+    MethodCell(String name, String desc, String agentName, String agentDesc, int paramsStart,
+            int paramsCount, int... opcodes) {
         this.name = name;
         this.desc = desc;
-        this.parent = parent;
         this.agentName = agentName;
         this.agentDesc = agentDesc;
         this.paramsStart = paramsStart;
