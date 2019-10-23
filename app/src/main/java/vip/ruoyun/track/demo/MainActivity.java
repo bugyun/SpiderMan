@@ -3,6 +3,7 @@ package vip.ruoyun.track.demo;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.Button;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 import vip.ruoyun.track.core.annotation.SpiderManIgnore;
@@ -26,11 +27,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
             }
         });
+
+        Button button = findViewById(R.id.mButton);
+
+        button.setOnClickListener(v -> {
+//                SpiderManTracker.trackView(v);
+            System.out.println("12123");
+
+        });
     }
 
     @Override
-    public void onClick(final View v) {
-
+    public void onClick(View v) {
+        System.out.println("12123");
+//        SpiderManTracker.trackView(v);
     }
 
 

@@ -19,4 +19,11 @@ public class AsmUtils {
     public static boolean isStatic(int access) {
         return (access & Opcodes.ACC_STATIC) != 0;
     }
+
+    public static boolean isLambda(int access) {
+        return isSynthetic(access)
+                && isPrivate(access)
+                && isStatic(access);
+    }
+
 }

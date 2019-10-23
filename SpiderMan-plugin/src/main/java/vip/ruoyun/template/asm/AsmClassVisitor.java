@@ -56,7 +56,7 @@ public class AsmClassVisitor extends ClassVisitor implements Opcodes {
         if (isFragmentVisitor) {
             return new FragmentMethodVisitor(api, mv, access, name, desc, superName, visitedFragmentMethods);
         } else {
-            return new AsmMethodVisitor(api, mv, access, name, desc);
+            return new ViewMethodVisitor(api, mv, access, name, desc);
         }
         //return super.visitMethod(access, name, desc, signature, exceptions);
     }
