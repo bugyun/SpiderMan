@@ -1,15 +1,15 @@
 package vip.ruoyun.template.asm;
 
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.HashSet;
 
-import java.util.Iterator;
 import java.util.Map.Entry;
 import org.objectweb.asm.AnnotationVisitor;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
+import vip.ruoyun.template.asm.config.FragmentConfig;
+import vip.ruoyun.template.asm.config.MethodCell;
 import vip.ruoyun.template.utils.LogM;
 
 public class AsmClassVisitor extends ClassVisitor implements Opcodes {
@@ -37,7 +37,7 @@ public class AsmClassVisitor extends ClassVisitor implements Opcodes {
         LogM.log("superName:" + superName);
         LogM.log("interfaces:" + Arrays.toString(interfaces));
         this.superName = superName;
-        if (FragmentMethodVisitor.supportFragmentClassList.contains(superName)) {
+        if (FragmentConfig.supportFragmentClassList.contains(superName)) {
             isFragmentVisitor = true;
         }
     }
@@ -66,49 +66,13 @@ public class AsmClassVisitor extends ClassVisitor implements Opcodes {
         super.visitEnd();
         LogM.log("=====---------- visitEnd ----------=====");
         if (isFragmentVisitor) {
-            for (final Entry<String, MethodCell> next : FragmentMethodVisitor.sFragmentMethods.entrySet()) {
+            for (final Entry<String, MethodCell> next : FragmentConfig.sFragmentMethods.entrySet()) {
                 LogM.hint("=====---------- test...{} , {}----------=====", next.getKey(), next.getValue());
                 if (!visitedFragmentMethods.contains(next.getKey())) {
-                    method(next.getValue(), cv, superName);
-//                    MethodVisitor methodVisitor = cv.visitMethod(ACC_PUBLIC, "onDestroy", "()V", null, null);
-//                    methodVisitor.visitCode();
-//                    methodVisitor.visitVarInsn(ALOAD, 0);
-//                    methodVisitor.visitMethodInsn(INVOKESPECIAL, superName, "onDestroy", "()V",
-//                            false);
-//                    methodVisitor.visitVarInsn(ALOAD, 0);
-//                    methodVisitor.visitMethodInsn(INVOKESTATIC, "vip/ruoyun/track/core/SpiderManTracker",
-//                            "onDestroy",
-//                            "(L" + superName + ";)V", false);
-//                    methodVisitor.visitInsn(RETURN);
-//                    methodVisitor.visitMaxs(1, 1);
-//                    methodVisitor.visitEnd();
+                    FragmentConfig.fragmentMethodAndSuper(next.getValue(), cv, superName);
                 }
             }
         }
-    }
-
-    private void method(final MethodCell methodCell, ClassVisitor cv, final String superName) {
-        MethodVisitor methodVisitor = cv
-                .visitMethod(ACC_PUBLIC, methodCell.name, methodCell.desc, null, null);
-        methodVisitor.visitCode();
-
-        for (int i = 0; i < methodCell.opcodes.length; i++) {
-            methodVisitor.visitVarInsn(methodCell.opcodes[i], methodCell.paramsStart + i);
-        }
-        //super
-        methodVisitor.visitMethodInsn(INVOKESPECIAL, superName, methodCell.name, methodCell.desc,
-                false);
-        for (int i = 0; i < methodCell.opcodes.length; i++) {
-            methodVisitor.visitVarInsn(methodCell.opcodes[i], methodCell.paramsStart + i);
-        }
-        methodVisitor.visitMethodInsn(INVOKESTATIC,
-                "vip/ruoyun/track/core/SpiderManTracker",
-                methodCell.agentName,
-                methodCell.agentDesc.replace("##", "L" + superName + ";"),
-                false);
-        methodVisitor.visitInsn(RETURN);
-        methodVisitor.visitMaxs(methodCell.opcodes.length, methodCell.opcodes.length);
-        methodVisitor.visitEnd();
     }
 
     //annotationVisitor0 = methodVisitor.visitAnnotation("Lvip/ruoyun/java/TestAnnotation;", true);

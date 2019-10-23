@@ -1,6 +1,4 @@
-package vip.ruoyun.template.asm;
-
-import java.util.HashSet;
+package vip.ruoyun.template.asm.config;
 
 /**
  * ASM 配置

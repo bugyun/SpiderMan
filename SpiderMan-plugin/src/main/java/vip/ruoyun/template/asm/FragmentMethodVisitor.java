@@ -1,65 +1,15 @@
 package vip.ruoyun.template.asm;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
 import java.util.HashSet;
 import org.objectweb.asm.MethodVisitor;
-import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.commons.AdviceAdapter;
+import vip.ruoyun.template.asm.config.FragmentConfig;
 
 /**
  * fragment 方法检测
  */
 class FragmentMethodVisitor extends AdviceAdapter {
 
-    static final ImmutableList<String> supportFragmentClassList = ImmutableList.<String>builder()
-            .add(
-                    //Fragment
-                    "android/support/v4/app/Fragment",
-                    "android/support/v4/app/ListFragment",
-                    "android/support/v4/app/DialogFragment",
-                    // For AndroidX Fragment
-                    "androidx/fragment/app/Fragment",
-                    "androidx/fragment/app/ListFragment",
-                    "androidx/fragment/app/DialogFragment"
-            ).build();
-
-    final static ImmutableMap<String, MethodCell> sFragmentMethods = ImmutableMap.<String, MethodCell>builder()
-            .put("onResume()V", new MethodCell(
-                    "onResume",
-                    "()V",
-                    "trackFragmentResume",
-                    "(##)V",//Ljava/lang/Object;
-                    0,
-                    1,
-                    Opcodes.ALOAD)
-            ).put("setUserVisibleHint(Z)V", new MethodCell(
-                    "setUserVisibleHint",
-                    "(Z)V",
-                    "trackFragmentSetUserVisibleHint",
-                    "(##Z)V",//Ljava/lang/Object;
-                    0,
-                    2,
-                    Opcodes.ALOAD,
-                    Opcodes.ILOAD)
-            ).put("onHiddenChanged(Z)V", new MethodCell(
-                    "onHiddenChanged",
-                    "(Z)V",
-                    "trackOnHiddenChanged",
-                    "(##Z)V",//Ljava/lang/Object;
-                    0,
-                    2,
-                    Opcodes.ALOAD,
-                    Opcodes.ILOAD)
-            ).put("onPause()V", new MethodCell(
-                    "onPause",
-                    "()V",
-                    "onPause",
-                    "(##)V",//Ljava/lang/Object;
-                    0,
-                    1,
-                    Opcodes.ALOAD)
-            ).build();
 
     private final String superName;
 
@@ -103,45 +53,12 @@ class FragmentMethodVisitor extends AdviceAdapter {
     }
 
     private void write() {
-        String methodName = getName() + methodDesc;
-        switch (methodName) {//如果没有 super() 方法的话，就在直接写入
-            //void test(String str) --> methodName:"test"   methodDes:"(Ljava/lang/String;)V"
-            case "onResume()V":
-            case "onPause()V":
-                if (isWrite) {
-                    return;
-                }
-                mv.visitVarInsn(ALOAD, 0);
-                mv.visitMethodInsn(INVOKESTATIC, "vip/ruoyun/track/core/SpiderManTracker", "onResume",
-                        "(L" + superName + ";)V", false);
-                isWrite = true;
-                visitedFragmentMethods.add(methodName);
-                break;
-            case "setUserVisibleHint(Z)V":
-                if (isWrite) {
-                    return;
-                }
-                mv.visitVarInsn(ALOAD, 0);
-                mv.visitVarInsn(ILOAD, 1);
-                mv.visitMethodInsn(INVOKESTATIC, "vip/ruoyun/track/core/SpiderManTracker", "setUserVisibleHint",
-                        "(L" + superName + ";Z)V", false);
-                isWrite = true;
-                visitedFragmentMethods.add(methodName);
-                break;
-            case "onHiddenChanged(Z)V":
-                if (isWrite) {
-                    return;
-                }
-                mv.visitVarInsn(ALOAD, 0);
-                mv.visitVarInsn(ILOAD, 1);
-                mv.visitMethodInsn(INVOKESTATIC, "vip/ruoyun/track/core/SpiderManTracker", "onHiddenChanged",
-                        "(L" + superName + ";Z)V", false);
-                isWrite = true;
-                visitedFragmentMethods.add(methodName);
-                break;
-            default:
-                break;
+        if (isWrite) {
+            return;
         }
+        String methodName = getName() + methodDesc;
+        FragmentConfig.fragmentMethod(methodName, superName, mv);
+        isWrite = true;
+        visitedFragmentMethods.add(methodName);
     }
-
 }
