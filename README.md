@@ -18,7 +18,25 @@ implementation 'vip.ruoyun.spiderman.plugin:spider-man-core:1.0.0'
 ```
 
 ## 使用
-比如写一个打点的 plugin ，继承 SpiderManTransform 类，然后实现如下方法：
+首先定义自己的 Plugin,比如自定义一个打点的 Plugin,然后在里面注册自己的 Transform
+
+```java
+public class AutoTrackerPlugin implements Plugin<Project> {
+
+    @Override
+    public void apply(final Project project) {
+        if (!project.getPlugins().hasPlugin("com.android.application")) {
+            throw new GradleException("TrackerPlugin: Android Application plugin required");
+        }
+        project.getExtensions().create("autoTracker", AutoTrackerExt.class);
+        AppExtension appExtension = project.getExtensions().getByType(AppExtension.class);
+        appExtension.registerTransform(new AutoTrackerTransform(project), Collections.EMPTY_LIST);
+    }
+}
+```
+
+
+自定义 Transform，继承 SpiderManTransform 类，然后实现如下方法：
 - isOpen() 是否打开 ASM 转换
 - getAsmReader() 新建自己的 AsmReader
 
