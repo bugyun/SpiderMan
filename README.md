@@ -24,6 +24,8 @@ implementation 'vip.ruoyun.spiderman.plugin:spider-man-core:1.0.0'
 ```
 
 ## 使用
+
+### 自定义 Plugin
 首先定义自己的 Plugin,比如自定义一个打点的 Plugin,然后在里面注册自己的 Transform
 
 ```java
@@ -41,6 +43,7 @@ public class AutoTrackerPlugin implements Plugin<Project> {
 }
 ```
 
+### 自定义 Transform
 
 自定义 Transform，继承 SpiderManTransform 类，然后实现如下方法：
 - isOpen() 是否打开 ASM 转换
@@ -69,9 +72,10 @@ public class AutoTrackerTransform extends SpiderManTransform {
 }
 ```
 
+### 自定义 IAsmReader
 可以实现 SpiderManAsmReader 类，或者直接实现 IAsmReader 接口，但是后者需要重写 2 个方法。
 
-实现 SpiderManAsmReader 类
+#### 实现 SpiderManAsmReader 类
 ```java
 public class TestIAsmReader extends SpiderManAsmReader {
 
@@ -89,8 +93,8 @@ public class TestIAsmReader extends SpiderManAsmReader {
 }
 ```
 
+#### 进阶使用,实现 IAsmReader 接口
 
-进阶使用，实现 IAsmReader 接口
 ```java
 public interface IAsmReader {
 
