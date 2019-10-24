@@ -114,6 +114,12 @@ class AsmHelper implements IAsmReader {
 }
 ```
 
+然后编写自己的插件，按着插件的发布流程，就可以发布到 jcenter 仓库中，就可以直接使用了~
+关于插件开发的流程和如果上传到 jcenter 仓库，请参考下面的链接~
+
+[Android Gradle 自定义入门](https://ruoyun.vip/post/android-gradle-%E8%87%AA%E5%AE%9A%E4%B9%89%E5%85%A5%E9%97%A8/)
+
+
 ## 日志
 可以通过 LogM 来输出日志
 
