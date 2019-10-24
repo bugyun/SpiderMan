@@ -3,16 +3,18 @@ Android Gradle Transform 加速开发的工具
 
 开发者完全不用关心 Transform 的各种复杂的文件操作和线程间的切换问题。
 
-关于插件开发的流程和如何上传到 jcenter 仓库，请参考下面的链接~
-
-[Android Gradle 自定义入门](https://ruoyun.vip/post/android-gradle-%E8%87%AA%E5%AE%9A%E4%B9%89%E5%85%A5%E9%97%A8/)
-
 优点：
 1. 优化文件处理速度
 2. 启用多线程来优化速度
 3. 比市面上相关插件速度快1倍以上
 4. 避免处理各种文件
 5. 只需要继承几个类就可以完成 ASM 的代码注入
+
+## 入门
+
+关于插件开发的流程和如何上传到 jcenter 仓库，请参考下面的链接~
+
+[Android Gradle 自定义入门](https://ruoyun.vip/post/android-gradle-%E8%87%AA%E5%AE%9A%E4%B9%89%E5%85%A5%E9%97%A8/)
 
 ## 依赖
 在你写 gradle 插件的过程中，在plugin 插件的 build.gradle 中添加下面的依赖。
