@@ -1,20 +1,21 @@
-package vip.ruoyun.template.core;
+package vip.ruoyun.test;
 
 import java.io.IOException;
 import java.io.InputStream;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
+import vip.ruoyun.plugin.core.IAsmReader;
 import vip.ruoyun.template.asm.AsmClassVisitor;
 
 /**
  * 处理 ASM 的帮助类
  */
-class AsmHelper {
+class AsmHelper implements IAsmReader {
 
     /**
      * ASM 的入口
      */
-    static byte[] readSingleClassToByteArray(InputStream inputStream) throws IOException {
+    public byte[] readSingleClassToByteArray(InputStream inputStream) throws IOException {
         //开始处理，通过 ASM
         ClassReader classReader = new ClassReader(inputStream);
         //writer
@@ -30,7 +31,7 @@ class AsmHelper {
     /**
      * asm 是否需要访问内部
      */
-    static boolean canReadableClass(String fullQualifiedClassName) {
+    public boolean canReadableClass(String fullQualifiedClassName) {
         return fullQualifiedClassName.endsWith(".class")//后缀为.class 的文件
                 && !fullQualifiedClassName.startsWith("androidx.")//androidx 的包不读取
                 && !fullQualifiedClassName.startsWith("android.")//android 的包不读取
