@@ -10,8 +10,8 @@ apply plugin: 'com.novoda.bintray-release'  // 新增
 // 新增
 publish {
     userOrg = 'bugyun'        //bintray.com用户名
-    groupId = 'vip.ruoyun.plugin.core'  //group
-    artifactId = 'spider-man'   //项目名称 name
+    groupId = 'vip.ruoyun.plugin'  //group
+    artifactId = 'spider-man-core'   //项目名称 name
     publishVersion = '1.0.0'//版本号 version
     desc = 'android SpiderMan ASM 帮助者'//描述
     website = 'https://github.com/bugyun/SpiderMan' // 网址，github 地址

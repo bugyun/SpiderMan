@@ -56,8 +56,8 @@ uploadArchives {
     repositories {
         mavenDeployer {
             //设置插件的GAV参数
-            pom.groupId = 'vip.ruoyun.track.plugin'
-            pom.artifactId = 'spider-man'
+            pom.groupId = 'vip.ruoyun.plugin.core'
+            pom.artifactId = 'spider-man-tracker'
             pom.version = '1.0.0'
             //文件发布到下面目录
             repository(url: uri('../release'))
