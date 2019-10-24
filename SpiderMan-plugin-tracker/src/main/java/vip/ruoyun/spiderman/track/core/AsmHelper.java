@@ -5,7 +5,7 @@ import java.io.InputStream;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
 import vip.ruoyun.plugin.core.IAsmReader;
-import vip.ruoyun.template.asm.AsmClassVisitor;
+import vip.ruoyun.spiderman.track.asm.AsmClassVisitor;
 
 /**
  * 处理 ASM 的帮助类
