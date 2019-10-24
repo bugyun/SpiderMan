@@ -3,7 +3,7 @@ Android Gradle Transform 加速开发的工具
 
 开发者完全不用关心 Transform 的各种复杂的文件操作和线程间的切换问题。
 
-关于插件开发的流程和如果上传到 jcenter 仓库，请参考下面的链接~
+关于插件开发的流程和如何上传到 jcenter 仓库，请参考下面的链接~
 
 [Android Gradle 自定义入门](https://ruoyun.vip/post/android-gradle-%E8%87%AA%E5%AE%9A%E4%B9%89%E5%85%A5%E9%97%A8/)
 
