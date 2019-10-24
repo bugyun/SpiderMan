@@ -1,4 +1,4 @@
-package vip.ruoyun.template.core;
+package vip.ruoyun.plugin.core;
 
 import com.android.build.api.transform.TransformOutputProvider;
 import com.android.builder.model.AndroidProject;
@@ -19,20 +19,24 @@ import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
-import vip.ruoyun.template.utils.LogM;
 
 /**
  * 处理文件
  */
-class HandleHelper {
+public class HandleHelper {
+
+    private IAsmReader mReader;
+
+    public HandleHelper(IAsmReader iAsmReader) {
+        this.mReader = iAsmReader;
+    }
 
     /**
      * 处理 intermediates/transforms/dexBuilder 文件
      */
-    static void cleanDexBuilderFolder(String filePath) {
+    public void cleanDexBuilderFolder(String filePath) {
         Path path = Paths.get(filePath, AndroidProject.FD_INTERMEDIATES, "transforms",
                 "dexBuilder");
-        LogM.log("cleanDexBuilderFolder:" + path.toString());
         File file = path.toFile();
         if (file.exists()) {
             try {
@@ -46,7 +50,7 @@ class HandleHelper {
     /**
      * 删除 OutputFolder 的文件
      */
-    static void cleanOutputFolder(final TransformOutputProvider outputProvider) {
+    public void cleanOutputFolder(final TransformOutputProvider outputProvider) {
         try {
             outputProvider.deleteAll();
         } catch (IOException e) {
@@ -59,7 +63,7 @@ class HandleHelper {
     /**
      * 处理 jar 文件
      */
-    static void handleJar(File inputJar, File outputJar) throws IOException {
+    public void handleJar(File inputJar, File outputJar) throws IOException {
         ZipFile inputZip = new ZipFile(inputJar);
         ZipOutputStream outputZip = new ZipOutputStream(new BufferedOutputStream(
                 java.nio.file.Files.newOutputStream(outputJar.toPath())));
@@ -71,10 +75,10 @@ class HandleHelper {
             ZipEntry outEntry = new ZipEntry(entry.getName());
             byte[] newEntryContent;
             // seperator of entry name is always '/', even in windows
-            if (!AsmHelper.canReadableClass(outEntry.getName().replace("/", "."))) {
+            if (!mReader.canReadableClass(outEntry.getName().replace("/", "."))) {
                 newEntryContent = IOUtils.toByteArray(originalFile);
             } else {
-                newEntryContent = AsmHelper.readSingleClassToByteArray(originalFile);
+                newEntryContent = mReader.readSingleClassToByteArray(originalFile);
             }
             CRC32 crc32 = new CRC32();
             crc32.update(newEntryContent, 0, newEntryContent.length);
@@ -98,23 +102,23 @@ class HandleHelper {
     /**
      * 处理单个文件
      */
-    static void handleSingleClassToFile(File inputFile, File outputFile, String inputBaseDir, boolean isOpen)
+    public void handleSingleClassToFile(File inputFile, File outputFile, String inputBaseDir, boolean isOpen)
             throws IOException {
         if (!inputBaseDir.endsWith(FILE_SEP)) {
             inputBaseDir = inputBaseDir + FILE_SEP;
         }
-        if (isOpen && AsmHelper
+        if (isOpen && mReader
                 .canReadableClass(inputFile.getAbsolutePath().replace(inputBaseDir, "").replace(FILE_SEP, "."))) {
-            org.apache.commons.io.FileUtils.touch(outputFile);
+            FileUtils.touch(outputFile);
             InputStream inputStream = new FileInputStream(inputFile);
-            byte[] bytes = AsmHelper.readSingleClassToByteArray(inputStream);
+            byte[] bytes = mReader.readSingleClassToByteArray(inputStream);
             FileOutputStream fos = new FileOutputStream(outputFile);
             fos.write(bytes);
             fos.close();
             inputStream.close();
         } else {
             if (inputFile.isFile()) {
-                org.apache.commons.io.FileUtils.touch(outputFile);
+                FileUtils.touch(outputFile);
                 FileUtils.copyFile(inputFile, outputFile);
             }
         }
