@@ -69,7 +69,28 @@ public class AutoTrackerTransform extends SpiderManTransform {
 }
 ```
 
-然后实现 IAsmReader 接口
+可以实现 SpiderManAsmReader 类，或者直接实现 IAsmReader 接口，但是后者需要重写 2 个方法。
+
+实现 SpiderManAsmReader 类
+```java
+public class TestIAsmReader extends SpiderManAsmReader {
+
+    @Override
+    public ClassVisitor createClassVisitor(final ClassWriter classWriter) {
+        return new ClassVisitor(Opcodes.ASM7, classWriter) {
+            @Override
+            public void visit(final int version, final int access, final String name, final String signature,
+                    final String superName,
+                    final String[] interfaces) {
+                super.visit(version, access, name, signature, superName, interfaces);
+            }
+        };
+    }
+}
+```
+
+
+进阶使用，实现 IAsmReader 接口
 ```java
 public interface IAsmReader {
 
@@ -86,7 +107,6 @@ public interface IAsmReader {
 }
 ```
 
-例子
 ```java
 class AsmHelper implements IAsmReader {
 
