@@ -3,6 +3,10 @@ Android Gradle Transform 加速开发的工具
 
 开发者完全不用关心 Transform 的各种复杂的文件操作和线程间的切换问题。
 
+关于插件开发的流程和如果上传到 jcenter 仓库，请参考下面的链接~
+
+[Android Gradle 自定义入门](https://ruoyun.vip/post/android-gradle-%E8%87%AA%E5%AE%9A%E4%B9%89%E5%85%A5%E9%97%A8/)
+
 优点：
 1. 优化文件处理速度
 2. 启用多线程来优化速度
@@ -115,11 +119,6 @@ class AsmHelper implements IAsmReader {
 ```
 
 然后编写自己的插件，按着插件的发布流程，就可以发布到 jcenter 仓库中，就可以直接使用了~
-
-关于插件开发的流程和如果上传到 jcenter 仓库，请参考下面的链接~
-
-[Android Gradle 自定义入门](https://ruoyun.vip/post/android-gradle-%E8%87%AA%E5%AE%9A%E4%B9%89%E5%85%A5%E9%97%A8/)
-
 
 ## 日志
 可以通过 LogM 来输出日志
