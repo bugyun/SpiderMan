@@ -8,5 +8,5 @@ public class AsmConfig {
     /**
      * 包的名称
      */
-    public static final String ASM_PAGE_CLASS_NAME = "vip/ruoyun/track/core/SpiderManTracker";
+    public static final String ASM_PAGE_CLASS_NAME = "vip.ruoyun.spiderman.tracker.SpiderManTracker";
 }

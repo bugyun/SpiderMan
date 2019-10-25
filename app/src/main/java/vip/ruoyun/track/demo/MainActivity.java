@@ -6,8 +6,8 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
-import vip.ruoyun.track.core.annotation.SpiderManIgnore;
-import vip.ruoyun.track.core.annotation.SpiderManPage;
+import vip.ruoyun.spiderman.tracker.annotation.SpiderManIgnore;
+import vip.ruoyun.spiderman.tracker.annotation.SpiderManPage;
 import vip.ruoyun.track.demo.databinding.ActivityMainBinding;
 
 @SpiderManPage(name = "主界面")

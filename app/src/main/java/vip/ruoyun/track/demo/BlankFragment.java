@@ -10,7 +10,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import vip.ruoyun.track.core.annotation.SpiderManPage;
+import vip.ruoyun.spiderman.tracker.annotation.SpiderManPage;
 
 
 /**

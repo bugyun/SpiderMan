@@ -10,7 +10,7 @@ public class MethodCell {
     //opcode 0
     //
     //植入的方法
-    //owner vip/ruoyun/track/core/SpiderManTracker
+    //owner vip.ruoyun.spiderman.tracker.SpiderManTracker
     //name
     //desc
     //maxStack
@@ -20,7 +20,7 @@ public class MethodCell {
     //                    methodCell.desc = "()V";
     //                    methodCell.opcodes = {ALOAD};
     //                    methodCell.parent = superName;
-    //                    methodCell.parent = "vip/ruoyun/track/core/SpiderManTracker";
+    //                    methodCell.parent = "vip.ruoyun.spiderman.tracker.SpiderManTracker";
     //                    methodCell.agentName = "onDestroy";
     //                    methodCell.agentDesc = "(L" + superName + ";)V";
     //                    methodCell.paramsStart = 0;

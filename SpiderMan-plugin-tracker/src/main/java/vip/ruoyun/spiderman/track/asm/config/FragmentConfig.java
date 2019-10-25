@@ -68,7 +68,7 @@ public class FragmentConfig implements Opcodes {
 
     // methodVisitor.visitVarInsn(ALOAD, 0);
     // methodVisitor.visitVarInsn(ILOAD, 1);
-    // methodVisitor.visitMethodInsn(INVOKESTATIC, "vip/ruoyun/track/core/SpiderManTracker", "setUserVisibleHint",
+    // methodVisitor.visitMethodInsn(INVOKESTATIC, "vip.ruoyun.spiderman.tracker.SpiderManTracker", "setUserVisibleHint",
     //                            "(Landroidx/fragment/app/Fragment;Z)V", false);
     public static boolean fragmentMethod(String methodName, String superName, final MethodVisitor mv) {
         MethodCell methodCell = sFragmentMethods.get(methodName);

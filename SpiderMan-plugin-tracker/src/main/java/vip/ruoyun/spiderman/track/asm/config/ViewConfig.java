@@ -8,7 +8,7 @@ public class ViewConfig {
 
 
     // methodVisitor.visitVarInsn(ALOAD, 1);
-    //   methodVisitor.visitMethodInsn(INVOKESTATIC, "vip/ruoyun/track/core/SpiderManTracker", "trackView",
+    //   methodVisitor.visitMethodInsn(INVOKESTATIC, "vip.ruoyun.spiderman.tracker.SpiderManTracker", "trackView",
     //                    "(Landroid/view/View;)V", false);
     public final static ImmutableMap<String, MethodCell> sViewMethods = ImmutableMap.<String, MethodCell>builder()
             .put("onClick(Landroid/view/View;)V", new MethodCell(
