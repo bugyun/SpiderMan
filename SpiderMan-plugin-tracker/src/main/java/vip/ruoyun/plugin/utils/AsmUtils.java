@@ -1,4 +1,4 @@
-package vip.ruoyun.spiderman.track.utils;
+package vip.ruoyun.plugin.utils;
 
 import org.objectweb.asm.Opcodes;
 

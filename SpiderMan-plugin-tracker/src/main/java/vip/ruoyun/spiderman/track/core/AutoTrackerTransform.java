@@ -21,6 +21,6 @@ public class AutoTrackerTransform extends SpiderManTransform {
 
     @Override
     public IAsmReader getAsmReader() {
-        return new AsmHelper();
+        return new AutoTrackerAsmReader();
     }
 }
