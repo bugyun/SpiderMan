@@ -19,6 +19,8 @@ SpiderMan 是一个在编译时期动态修改代码的工具。
 
 ## AutoTracker 全埋点
 
+Android字节码插件，编译期间动态修改代码，基于 SpiderMan-plugin-core 插件开发的全埋点工具
+
 [点我，链接](https://github.com/bugyun/SpiderMan/tree/master/SpiderMan-tracker-core)
 
 
