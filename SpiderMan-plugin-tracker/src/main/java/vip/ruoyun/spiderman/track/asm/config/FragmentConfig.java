@@ -5,7 +5,7 @@ import com.google.common.collect.ImmutableMap;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
-import vip.ruoyun.template.utils.LogM;
+import vip.ruoyun.plugin.utils.LogM;
 
 /**
  * 关于 fragment 的所有配置

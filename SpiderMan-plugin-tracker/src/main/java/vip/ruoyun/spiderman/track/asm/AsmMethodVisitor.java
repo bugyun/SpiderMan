@@ -3,8 +3,8 @@ package vip.ruoyun.spiderman.track.asm;
 import org.objectweb.asm.AnnotationVisitor;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.commons.AdviceAdapter;
-import vip.ruoyun.template.utils.AsmUtils;
-import vip.ruoyun.template.utils.LogM;
+import vip.ruoyun.plugin.utils.AsmUtils;
+import vip.ruoyun.plugin.utils.LogM;
 
 public class AsmMethodVisitor extends AdviceAdapter {
 

@@ -7,6 +7,7 @@ import org.junit.*;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.util.TraceClassVisitor;
+import vip.ruoyun.template.asm.AsmClassVisitor;
 
 public class TestAsm {
 

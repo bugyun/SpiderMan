@@ -7,9 +7,9 @@ import org.objectweb.asm.AnnotationVisitor;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
+import vip.ruoyun.plugin.utils.LogM;
 import vip.ruoyun.spiderman.track.asm.config.FragmentConfig;
 import vip.ruoyun.spiderman.track.asm.config.MethodCell;
-import vip.ruoyun.template.utils.LogM;
 
 public class AsmClassVisitor extends ClassVisitor implements Opcodes {
 
