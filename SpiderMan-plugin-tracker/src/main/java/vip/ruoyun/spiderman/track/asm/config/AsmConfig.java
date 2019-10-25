@@ -5,18 +5,8 @@ package vip.ruoyun.spiderman.track.asm.config;
  */
 public class AsmConfig {
 
-    //注解类
-    //Lvip/ruoyun/track/core/annotation/SpiderManPage;
-
-    //忽略注解
-    //Lvip/ruoyun/track/core/annotation/SpiderManIgnore;
-
-    //
-    // methodVisitor.visitVarInsn(ALOAD, 0);
-    // methodVisitor.visitVarInsn(ILOAD, 1);
-    // methodVisitor.visitMethodInsn(INVOKESTATIC, "vip/ruoyun/track/core/SpiderManTracker", "setUserVisibleHint",
-    //                            "(Landroidx/fragment/app/Fragment;Z)V", false);
-
-
-
+    /**
+     * 包的名称
+     */
+    public static final String ASM_PAGE_CLASS_NAME = "vip/ruoyun/track/core/SpiderManTracker";
 }

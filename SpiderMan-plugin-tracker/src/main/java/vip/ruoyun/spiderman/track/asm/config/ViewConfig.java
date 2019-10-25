@@ -14,6 +14,7 @@ public class ViewConfig {
             .put("onClick(Landroid/view/View;)V", new MethodCell(
                     "onClick",
                     "(Landroid/view/View;)V",
+                    AsmConfig.ASM_PAGE_CLASS_NAME,
                     "trackView",
                     "(Landroid/view/View;)V",
                     1,
@@ -26,6 +27,7 @@ public class ViewConfig {
             .put("(Landroid/view/View;)V", new MethodCell(
                     "onClick",
                     "(Landroid/view/View;)V",
+                    AsmConfig.ASM_PAGE_CLASS_NAME,
                     "trackView",
                     "(Landroid/view/View;)V",
                     1,
@@ -35,14 +37,16 @@ public class ViewConfig {
 
     public static void method(MethodVisitor mv) {
         mv.visitVarInsn(Opcodes.ALOAD, 1);
-        mv.visitMethodInsn(Opcodes.INVOKESTATIC, "vip/ruoyun/track/core/SpiderManTracker", "trackView",
+        mv.visitMethodInsn(Opcodes.INVOKESTATIC, AsmConfig.ASM_PAGE_CLASS_NAME, "trackView",
                 "(Landroid/view/View;)V", false);
     }
 
     public static void lambdaMethod(MethodVisitor mv) {
         mv.visitVarInsn(Opcodes.ALOAD, 0);
-        mv.visitMethodInsn(Opcodes.INVOKESTATIC, "vip/ruoyun/track/core/SpiderManTracker", "trackView",
+        mv.visitMethodInsn(Opcodes.INVOKESTATIC, AsmConfig.ASM_PAGE_CLASS_NAME, "trackView",
                 "(Landroid/view/View;)V", false);
     }
+
+
 
 }

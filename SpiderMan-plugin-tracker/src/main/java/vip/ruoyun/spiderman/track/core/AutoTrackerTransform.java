@@ -3,6 +3,7 @@ package vip.ruoyun.spiderman.track.core;
 import org.gradle.api.Project;
 import vip.ruoyun.plugin.SpiderManTransform;
 import vip.ruoyun.plugin.core.IAsmReader;
+import vip.ruoyun.plugin.utils.LogM;
 import vip.ruoyun.spiderman.track.ext.AutoTrackerExt;
 
 public class AutoTrackerTransform extends SpiderManTransform {
@@ -21,6 +22,8 @@ public class AutoTrackerTransform extends SpiderManTransform {
 
     @Override
     public IAsmReader getAsmReader() {
+        LogM.isLog = mAutoTrackerExt.isLog();
+        LogM.isHint = mAutoTrackerExt.isLog();
         return new AutoTrackerAsmReader();
     }
 }

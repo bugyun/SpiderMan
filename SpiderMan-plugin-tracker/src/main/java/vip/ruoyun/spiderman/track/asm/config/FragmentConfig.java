@@ -28,6 +28,8 @@ public class FragmentConfig implements Opcodes {
             .put("onResume()V", new MethodCell(
                     "onResume",
                     "()V",
+                    AsmConfig.ASM_PAGE_CLASS_NAME,
+
                     "onResume",
                     "(##)V",//Ljava/lang/Object;
                     0,
@@ -36,6 +38,7 @@ public class FragmentConfig implements Opcodes {
             ).put("setUserVisibleHint(Z)V", new MethodCell(
                     "setUserVisibleHint",
                     "(Z)V",
+                    AsmConfig.ASM_PAGE_CLASS_NAME,
                     "setUserVisibleHint",
                     "(##Z)V",//Ljava/lang/Object;
                     0,
@@ -45,6 +48,7 @@ public class FragmentConfig implements Opcodes {
             ).put("onHiddenChanged(Z)V", new MethodCell(
                     "onHiddenChanged",
                     "(Z)V",
+                    AsmConfig.ASM_PAGE_CLASS_NAME,
                     "onHiddenChanged",
                     "(##Z)V",//Ljava/lang/Object;
                     0,
@@ -54,6 +58,7 @@ public class FragmentConfig implements Opcodes {
             ).put("onPause()V", new MethodCell(
                     "onPause",
                     "()V",
+                    AsmConfig.ASM_PAGE_CLASS_NAME,
                     "onPause",
                     "(##)V",//Ljava/lang/Object;
                     0,
@@ -61,7 +66,10 @@ public class FragmentConfig implements Opcodes {
                     Opcodes.ALOAD)
             ).build();
 
-
+    // methodVisitor.visitVarInsn(ALOAD, 0);
+    // methodVisitor.visitVarInsn(ILOAD, 1);
+    // methodVisitor.visitMethodInsn(INVOKESTATIC, "vip/ruoyun/track/core/SpiderManTracker", "setUserVisibleHint",
+    //                            "(Landroidx/fragment/app/Fragment;Z)V", false);
     public static boolean fragmentMethod(String methodName, String superName, final MethodVisitor mv) {
         MethodCell methodCell = sFragmentMethods.get(methodName);
         if (methodCell != null) {
@@ -71,7 +79,7 @@ public class FragmentConfig implements Opcodes {
             LogM.hint(methodCell.toString());
             LogM.hint(methodCell.agentDesc.replace("##", "L" + superName + ";"));
             mv.visitMethodInsn(INVOKESTATIC,
-                    "vip/ruoyun/track/core/SpiderManTracker",
+                    methodCell.owner,
                     methodCell.agentName,
                     methodCell.agentDesc.replace("##", "L" + superName + ";"),
                     false);
@@ -79,7 +87,6 @@ public class FragmentConfig implements Opcodes {
         }
         return false;
     }
-
 
     //补充方法
     public static void fragmentMethodAndSuper(final MethodCell methodCell, ClassVisitor cv, final String superName) {
@@ -96,7 +103,7 @@ public class FragmentConfig implements Opcodes {
             methodVisitor.visitVarInsn(methodCell.opcodes[i], methodCell.paramsStart + i);
         }
         methodVisitor.visitMethodInsn(INVOKESTATIC,
-                "vip/ruoyun/track/core/SpiderManTracker",
+                methodCell.owner,
                 methodCell.agentName,
                 methodCell.agentDesc.replace("##", "L" + superName + ";"),
                 false);
@@ -104,5 +111,4 @@ public class FragmentConfig implements Opcodes {
         methodVisitor.visitMaxs(methodCell.opcodes.length, methodCell.opcodes.length);
         methodVisitor.visitEnd();
     }
-
 }

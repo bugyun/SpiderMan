@@ -20,7 +20,8 @@ public class MethodCell {
     //                    methodCell.desc = "()V";
     //                    methodCell.opcodes = {ALOAD};
     //                    methodCell.parent = superName;
-    //                    methodCell.agentName = "vip/ruoyun/track/core/SpiderManTracker";
+    //                    methodCell.parent = "vip/ruoyun/track/core/SpiderManTracker";
+    //                    methodCell.agentName = "onDestroy";
     //                    methodCell.agentDesc = "(L" + superName + ";)V";
     //                    methodCell.paramsStart = 0;
     //                    methodCell.paramsCount = 1;
@@ -30,6 +31,8 @@ public class MethodCell {
 
     // 原方法描述
     public final String desc;
+
+    public final String owner;
 
     // 采集数据的方法名
     public final String agentName;
@@ -46,10 +49,11 @@ public class MethodCell {
     // 参数类型对应的ASM指令，加载不同类型的参数需要不同的指令
     public final int[] opcodes;
 
-    public MethodCell(String name, String desc, String agentName, String agentDesc, int paramsStart,
+    public MethodCell(String name, String desc, String owner, String agentName, String agentDesc, int paramsStart,
             int paramsCount, int... opcodes) {
         this.name = name;
         this.desc = desc;
+        this.owner = owner;
         this.agentName = agentName;
         this.agentDesc = agentDesc;
         this.paramsStart = paramsStart;
@@ -62,6 +66,7 @@ public class MethodCell {
         return "MethodCell{" +
                 "name='" + name + '\'' +
                 ", desc='" + desc + '\'' +
+                ", owner='" + owner + '\'' +
                 ", agentName='" + agentName + '\'' +
                 ", agentDesc='" + agentDesc + '\'' +
                 ", paramsStart=" + paramsStart +
