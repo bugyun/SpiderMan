@@ -1,12 +1,13 @@
 package vip.ruoyun.spiderman.tracker;
 
 /**
- * Created by ruoyun on 2019-10-09.
+ * Created by ruoyun on 2019-10-31.
  * Author:若云
  * Mail:zyhdvlp@gmail.com
  * Depiction:
  */
-public class SpiderMan {
+public class AutoTracker {
+
 
 
     private class Builder {

@@ -32,7 +32,17 @@ public class ViewMethodVisitor extends AdviceAdapter {
     @Override
     protected void onMethodEnter() {
         super.onMethodEnter();
-        LogM.log("onMethodEnter");
+    }
+
+    @Override
+    protected void onMethodExit(int opcode) {
+        super.onMethodExit(opcode);
+        if (opcode != ATHROW) {
+            writeAsm();
+        }
+    }
+
+    private void writeAsm() {
         if (getName().startsWith("lambda$") && ViewConfig.sViewLambdaMethods.containsKey(methodDesc) && AsmUtils
                 .isLambda(methodAccess)) { //lambda 方法
             ViewConfig.lambdaMethod(mv);
@@ -45,11 +55,6 @@ public class ViewMethodVisitor extends AdviceAdapter {
         if (ViewConfig.sViewMethods.containsKey(getName() + methodDesc)) {
             ViewConfig.method(mv);
         }
-    }
-
-    @Override
-    protected void onMethodExit(int opcode) {
-        super.onMethodExit(opcode);
     }
 
     //annotationVisitor0 = methodVisitor.visitAnnotation("Lvip/ruoyun/java/TestAnnotation;", true);

@@ -1,32 +1,19 @@
 package vip.ruoyun.spiderman.tracker;
 
+import android.support.v4.app.Fragment;
 import android.view.View;
-import androidx.fragment.app.Fragment;
 
 /**
- * Created by ruoyun on 2019-10-21.
+ * Created by ruoyun on 2019-10-31.
  * Author:若云
  * Mail:zyhdvlp@gmail.com
  * Depiction:
  */
-public class SpiderManTracker {
-
-
-    //
-    public static void testView(View view) {
-
-    }
-
-    //利用所属Page+ViewTree构建ViewID.
-    public static void getViewId(View view) {
-
-    }
+public class AutoTrackerMonitor {
 
     public static void trackView(View view) {
 
     }
-
-
 
     /**
      * 获得焦点
@@ -47,10 +34,6 @@ public class SpiderManTracker {
 
     }
 
-    public static void onDestroy(Fragment fragment) {
-
-    }
-
     /**
      * fragment 的方法，用来监听 tab 切换 fragment
      */
@@ -68,9 +51,5 @@ public class SpiderManTracker {
     public static void setUserVisibleHint(Fragment fragment, boolean isVisibleToUser) {
 
     }
+
 }
-
-
-
-
-
