@@ -1,9 +1,7 @@
 package vip.ruoyun.spiderman.tracker.annotation;
 
-import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
 
 /**
  * Created by ruoyun on 2019-10-31.
@@ -12,10 +10,9 @@ import java.lang.annotation.Target;
  * Depiction:
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.TYPE)
-public @interface AutoTrackerPage {
+public @interface PageMapping {
 
-    String name();
+    String key();
 
-    PageMapping[] properties() default {};
+    String value();
 }

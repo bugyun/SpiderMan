@@ -8,9 +8,15 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import vip.ruoyun.spiderman.tracker.annotation.AutoTrackerIgnore;
 import vip.ruoyun.spiderman.tracker.annotation.AutoTrackerPage;
+import vip.ruoyun.spiderman.tracker.annotation.PageMapping;
 import vip.ruoyun.track.demo.databinding.ActivityMainBinding;
 
-@AutoTrackerPage(name = "主界面")
+@AutoTrackerPage(
+        name = "主界面",
+        properties = {
+                @PageMapping(key = "", value = ""),
+                @PageMapping(key = "", value = "")
+        })
 @AutoTrackerIgnore
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 

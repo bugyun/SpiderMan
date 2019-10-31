@@ -247,3 +247,71 @@ AutoTracker.with(app).viewTracker(new IViewTracker() {
 - trackDrawerClosed
 - trackViewOnClick
 - trackViewOnClick
+
+
+## 关于 butterknife
+
+插件完美使用与butterknife
+原理讲解：
+butterknife 自动生成的代码如下
+
+```java
+public class MainActivity_ViewBinding implements Unbinder {
+  private MainActivity target;
+
+  private View view2131165217;
+
+  @UiThread
+  public MainActivity_ViewBinding(MainActivity target) {
+    this(target, target.getWindow().getDecorView());
+  }
+
+  @UiThread
+  public MainActivity_ViewBinding(final MainActivity target, View source) {
+    this.target = target;
+
+    View view;
+    target.title = Utils.findRequiredViewAsType(source, R.id.tv_title, "field 'title'", TextView.class);
+    view = Utils.findRequiredView(source, R.id.bt_submit, "method 'submit'");
+    view2131165217 = view;
+    view.setOnClickListener(new DebouncingOnClickListener() {
+      @Override
+      public void doClick(View p0) {
+        target.submit();
+      }
+    });
+  }
+
+  @Override
+  @CallSuper
+  public void unbind() {
+    MainActivity target = this.target;
+    if (target == null) throw new IllegalStateException("Bindings already cleared.");
+    this.target = null;
+
+    target.title = null;
+
+    view2131165217.setOnClickListener(null);
+    view2131165217 = null;
+  }
+}
+```
+
+DebouncingOnClickListener的源码，AutoTracker 会在下面的代码的 TODO 处插入代码。
+```java
+public abstract class DebouncingOnClickListener implements View.OnClickListener {
+  static boolean enabled = true;
+
+  private static final Runnable ENABLE_AGAIN = () -> enabled = true;
+
+  @Override public final void onClick(View v) {
+    if (enabled) {
+      enabled = false;
+      v.post(ENABLE_AGAIN);
+      doClick(v);
+    }
+    //TODO 插入代码
+  }
+  public abstract void doClick(View v);
+}
+```
