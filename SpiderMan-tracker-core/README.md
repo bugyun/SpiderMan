@@ -251,9 +251,9 @@ AutoTracker.with(app).viewTracker(new IViewTracker() {
 
 ## 关于 butterknife
 
-插件完美使用与butterknife
-原理讲解：
-butterknife 自动生成的代码如下
+插件完美兼容 butterknife
+
+原理讲解：butterknife 自动生成的代码如下
 
 ```java
 public class MainActivity_ViewBinding implements Unbinder {
