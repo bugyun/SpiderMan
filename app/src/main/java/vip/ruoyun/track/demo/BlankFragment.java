@@ -9,13 +9,13 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import vip.ruoyun.spiderman.tracker.annotation.SpiderManPage;
+import vip.ruoyun.spiderman.tracker.annotation.AutoTrackerPage;
 
 
 /**
  * A simple {@link android.support.v4.app.Fragment} subclass.
  */
-@SpiderManPage(name = "我是fragment")
+@AutoTrackerPage(name = "我是fragment")
 public class BlankFragment extends BaseFragment {
 
     public BlankFragment() {

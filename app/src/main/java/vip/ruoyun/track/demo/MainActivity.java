@@ -6,12 +6,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
-import vip.ruoyun.spiderman.tracker.annotation.SpiderManIgnore;
-import vip.ruoyun.spiderman.tracker.annotation.SpiderManPage;
+import vip.ruoyun.spiderman.tracker.annotation.AutoTrackerIgnore;
+import vip.ruoyun.spiderman.tracker.annotation.AutoTrackerPage;
 import vip.ruoyun.track.demo.databinding.ActivityMainBinding;
 
-@SpiderManPage(name = "主界面")
-@SpiderManIgnore
+@AutoTrackerPage(name = "主界面")
+@AutoTrackerIgnore
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
     private ActivityMainBinding mMainBinding;
