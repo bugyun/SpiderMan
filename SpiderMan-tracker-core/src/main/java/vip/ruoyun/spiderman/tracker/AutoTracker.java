@@ -21,8 +21,18 @@ public class AutoTracker {
 
     private static Context mContext;
 
+    /**
+     * 设置 view 的 业务数据
+     */
     public static void setTrackData(View view, Object object) {
         view.setTag(R.id.auto_tracker_tag_view_value_data, object);
+    }
+
+    /**
+     * 设置界面元素 view 的 element id,其实也就是标识符（身份id）
+     */
+    public static void setElementId(View view, String object) {
+        view.setTag(R.id.auto_tracker_tag_view_value_element_id, object);
     }
 
     public static Builder with(Application application) {
@@ -31,7 +41,9 @@ public class AutoTracker {
     }
 
     private static class Builder {
+
         //上传策略  Upload strategy
+        private String url;
 
         private String appChannel;
 

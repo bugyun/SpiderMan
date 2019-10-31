@@ -3,5 +3,6 @@
 
 
     <item name="auto_tracker_tag_view_value_data" type="id" />
+    <item name="auto_tracker_tag_view_value_element_id" type="id" />
 
 </resources>
