@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">SpiderMan-tracker-core</string>
+
+
+    <item name="auto_tracker_tag_view_value_data" type="id" />
+
 </resources>
