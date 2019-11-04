@@ -9,7 +9,8 @@ Android Gradle Transform 加速开发的工具
 2. 启用多线程来优化速度
 3. 比市面上相关插件速度快1倍以上
 4. 避免处理各种文件
-5. 只需要继承几个类就可以完成 ASM 的代码注入
+5. 只需要继承几个类就可以完成 ASM/Javassist 的代码注入
+6. 支持 ASM 和 Javassist 
 
 ## 入门
 
@@ -146,6 +147,74 @@ class AsmHelper implements IAsmReader {
 ```
 
 然后编写自己的插件，按着插件的发布流程，就可以发布到 jcenter 仓库中，就可以直接使用了~
+
+## Javassist 支持
+如果你想使用 Javassist 来对代码进行修改，那么可以实现 IAsmReader 接口，然后实现方法。
+
+通过 classPool 来读取具体的流，然后找到具体的类。就可以完美使用 Javassist 来处理 class。
+
+添加依赖
+```groovy
+implementation 'org.javassist:javassist:3.26.0-GA'
+```
+
+具体代码如下：
+```java
+public class JavassistReader implements IAsmReader {
+
+    /**
+     * Javassist 参考资料
+     * https://www.cnblogs.com/chiangchou/p/javassist.html
+     */
+    @Override
+    public byte[] readSingleClassToByteArray(final InputStream inputStream) throws IOException {
+        ClassPool classPool = new ClassPool(true);// 创建新的 ClassPool，避免内存溢出
+        //使用 classPool 加载类
+        //classPool.insertClassPath(new ClassClassPath(this.getClass()));
+        CtClass ctClass = classPool.makeClass(inputStream);//通过 InputStream 的方式，加载这个类
+
+        // 去除接口、注解、枚举、原生、数组等类型的类，以及代理类不解析
+        if (ctClass.isInterface() || ctClass.isAnnotation() || ctClass.isEnum() || ctClass.isPrimitive() || ctClass
+                .isArray() || ctClass.getSimpleName().contains("$")) {
+            return IOUtils.toByteArray(inputStream);//如果不解析，就直接返回这流
+        }
+        // 获取所有声明的方法
+        CtMethod[] methods = ctClass.getDeclaredMethods();
+        for (CtMethod method : methods) {
+            // 代理方法不解析
+            if (method.getName().contains("$")) {
+                continue;
+            }
+            // 包名
+            String packageName = ctClass.getPackageName();
+            // 类名
+            String className = ctClass.getSimpleName();
+            // 方法名
+            String methodName = method.getName();
+            // 参数：method.getLongName() 返回格式：com.test.TestService.selectOrder(java.lang.String,java.util.List,com.test.Order)，所以截取括号中的即可
+            String methodSignature = StringUtils
+                    .defaultIfBlank(StringUtils.substringBetween(method.getLongName(), "(", ")"), null);
+        }
+
+        try {
+            return ctClass.toBytecode();
+        } catch (CannotCompileException e) {
+            e.printStackTrace();
+        }
+        return IOUtils.toByteArray(inputStream);
+    }
+
+    @Override
+    public boolean canReadableClass(final String fullQualifiedClassName) {
+        return fullQualifiedClassName.endsWith(".class")//后缀为.class 的文件
+                && !fullQualifiedClassName.startsWith("androidx.")//androidx 的包不读取
+                && !fullQualifiedClassName.startsWith("android.")//android 的包不读取
+                && !fullQualifiedClassName.contains("R$") //不包含 R$ 文件
+                && !fullQualifiedClassName.contains("R.class")//不包含 R.class 文件
+                && !fullQualifiedClassName.contains("BuildConfig.class");//不包含 BuildConfig.class 文件
+    }
+}
+```
 
 ## 日志
 可以通过 LogM 来输出日志
