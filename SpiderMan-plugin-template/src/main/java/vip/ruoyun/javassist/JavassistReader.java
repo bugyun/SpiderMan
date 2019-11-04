@@ -8,9 +8,9 @@ import javassist.CtClass;
 import javassist.CtMethod;
 import org.apache.commons.io.IOUtils;
 import org.gradle.internal.impldep.org.apache.commons.lang.StringUtils;
-import vip.ruoyun.plugin.core.IAsmReader;
+import vip.ruoyun.plugin.core.IClassReader;
 
-public class JavassistReader implements IAsmReader {
+public class JavassistReader implements IClassReader {
 
     /**
      * Javassist 参考资料
@@ -44,8 +44,8 @@ public class JavassistReader implements IAsmReader {
             // 参数：method.getLongName() 返回格式：com.test.TestService.selectOrder(java.lang.String,java.util.List,com.test.Order)，所以截取括号中的即可
             String methodSignature = StringUtils
                     .defaultIfBlank(StringUtils.substringBetween(method.getLongName(), "(", ")"), null);
+//            method.addCatch();
         }
-
         try {
             return ctClass.toBytecode();
         } catch (CannotCompileException e) {
