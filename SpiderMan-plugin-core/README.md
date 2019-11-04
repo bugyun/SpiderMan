@@ -164,7 +164,7 @@ class AsmClassReader implements IClassReader {
 然后编写自己的插件，按着插件的发布流程，就可以发布到 jcenter 仓库中，就可以直接使用了~
 
 ## Javassist 支持
-如果你想使用 Javassist 来对代码进行修改，那么可以实现 IAsmReader 接口，然后实现方法。
+如果你想使用 Javassist 来对代码进行修改，那么可以实现 IClassReader 接口，然后实现方法。
 
 通过 classPool 来读取具体的流，然后找到具体的类。就可以完美使用 Javassist 来处理 class。
 
