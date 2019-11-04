@@ -48,8 +48,8 @@ public class AutoTrackerPlugin implements Plugin<Project> {
 ### 自定义 Transform
 
 自定义 Transform，继承 SpiderManTransform 类，然后实现如下方法：
-- isOpen() 是否打开 ASM 转换
-- getAsmReader() 新建自己的 AsmReader
+- isOpen() 是否打开 class 转换
+- getClassReader() 新建自己的 ClassReader
 - beginTransform() Transform 开始之前会执行此方法，可以在此函数中进行日志的输出，或者时间的计算
 - endTransform() Transform 结束之前会执行此方法，可以在此函数中进行日志的输出，或者时间的计算
 
