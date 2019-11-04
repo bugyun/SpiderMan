@@ -25,10 +25,14 @@ import org.apache.commons.io.IOUtils;
  */
 public class HandleHelper {
 
-    private IAsmReader mReader;
+    private IClassReader mReader;
 
-    public HandleHelper(IAsmReader iAsmReader) {
-        this.mReader = iAsmReader;
+    public HandleHelper(IClassReader iClassReader) {
+        if (iClassReader == null) {
+            this.mReader = new DefaultClassReader();
+        } else {
+            this.mReader = iClassReader;
+        }
     }
 
     /**
@@ -63,7 +67,7 @@ public class HandleHelper {
     /**
      * 处理 jar 文件
      */
-    public void handleJar(File inputJar, File outputJar) throws IOException {
+    public void handleJar(File inputJar, File outputJar) throws Exception {
         ZipFile inputZip = new ZipFile(inputJar);
         ZipOutputStream outputZip = new ZipOutputStream(new BufferedOutputStream(
                 java.nio.file.Files.newOutputStream(outputJar.toPath())));
@@ -103,7 +107,7 @@ public class HandleHelper {
      * 处理单个文件
      */
     public void handleSingleClassToFile(File inputFile, File outputFile, String inputBaseDir, boolean isOpen)
-            throws IOException {
+            throws Exception {
         if (!inputBaseDir.endsWith(FILE_SEP)) {
             inputBaseDir = inputBaseDir + FILE_SEP;
         }

@@ -22,7 +22,7 @@ Android Gradle Transform 加速开发的工具
 在你写 gradle 插件的过程中，在plugin 插件的 build.gradle 中添加下面的依赖。
 
 ```groovy
-implementation 'vip.ruoyun.spiderman.plugin:spider-man-core:1.0.0'
+implementation 'vip.ruoyun.spiderman.plugin:spider-man-core:1.0.1'
 ```
 
 ## 使用
@@ -50,6 +50,8 @@ public class AutoTrackerPlugin implements Plugin<Project> {
 自定义 Transform，继承 SpiderManTransform 类，然后实现如下方法：
 - isOpen() 是否打开 ASM 转换
 - getAsmReader() 新建自己的 AsmReader
+- beginTransform() Transform 开始之前会执行此方法，可以在此函数中进行日志的输出，或者时间的计算
+- endTransform() Transform 结束之前会执行此方法，可以在此函数中进行日志的输出，或者时间的计算
 
 
 ```java
@@ -62,20 +64,33 @@ public class AutoTrackerTransform extends SpiderManTransform {
         mAutoTrackerExt = project.getExtensions().getByType(AutoTrackerExt.class);
     }
 
+    //Transform 开始之前会执行此方法，可以在此函数中进行日志的输出，或者时间的计算
+    @Override
+    public void beginTransform() {
+
+    }
+    //Transform 结束之前会执行此方法，可以在此函数中进行日志的输出，或者时间的计算
+    @Override
+    public void endTransform() {
+
+    }
+    
+    //是否打开
     @Override
     public boolean isOpen() {
         return mAutoTrackerExt.isOpen();
     }
 
+    //创建自定义的 classReader
     @Override
-    public IAsmReader getAsmReader() {
-        return new AsmHelper();
+    public IClassReader getClassReader() {
+        return new TestIAsmReader();
     }
 }
 ```
 
-### 自定义 IAsmReader
-可以实现 SpiderManAsmReader 类，或者直接实现 IAsmReader 接口，但是后者需要重写 2 个方法。
+### 自定义 IClassReader
+可以实现 SpiderManAsmReader 类，或者直接实现 IClassReader 接口，但是后者需要重写 2 个方法。
 
 #### 实现 SpiderManAsmReader 类
 ```java
@@ -95,15 +110,15 @@ public class TestIAsmReader extends SpiderManAsmReader {
 }
 ```
 
-#### 进阶使用,实现 IAsmReader 接口
+#### 进阶使用,实现 IClassReader 接口
 
 ```java
-public interface IAsmReader {
+public interface IClassReader {
 
     /**
      * 读取 class 文件，在此处可以直接使用 ASM 来对文件进行处理
      */
-    byte[] readSingleClassToByteArray(InputStream inputStream) throws IOException;
+    byte[] readSingleClassToByteArray(InputStream inputStream) throws Exception;
 
     /**
      * 是否需要 ASM 文件扫描
@@ -114,12 +129,12 @@ public interface IAsmReader {
 ```
 
 ```java
-class AsmHelper implements IAsmReader {
+class AsmClassReader implements IClassReader {
 
     /**
      * ASM 的入口
      */
-    public byte[] readSingleClassToByteArray(InputStream inputStream) throws IOException {
+    public byte[] readSingleClassToByteArray(InputStream inputStream) throws Exception {
         //开始处理，通过 ASM
         ClassReader classReader = new ClassReader(inputStream);
         //writer
@@ -160,14 +175,14 @@ implementation 'org.javassist:javassist:3.26.0-GA'
 
 具体代码如下：
 ```java
-public class JavassistReader implements IAsmReader {
+public class JavassistReader implements IClassReader {
 
     /**
      * Javassist 参考资料
      * https://www.cnblogs.com/chiangchou/p/javassist.html
      */
     @Override
-    public byte[] readSingleClassToByteArray(final InputStream inputStream) throws IOException {
+    public byte[] readSingleClassToByteArray(final InputStream inputStream) throws Exception {
         ClassPool classPool = new ClassPool(true);// 创建新的 ClassPool，避免内存溢出
         //使用 classPool 加载类
         //classPool.insertClassPath(new ClassClassPath(this.getClass()));
@@ -195,13 +210,7 @@ public class JavassistReader implements IAsmReader {
             String methodSignature = StringUtils
                     .defaultIfBlank(StringUtils.substringBetween(method.getLongName(), "(", ")"), null);
         }
-
-        try {
-            return ctClass.toBytecode();
-        } catch (CannotCompileException e) {
-            e.printStackTrace();
-        }
-        return IOUtils.toByteArray(inputStream);
+        return ctClass.toBytecode();
     }
 
     @Override

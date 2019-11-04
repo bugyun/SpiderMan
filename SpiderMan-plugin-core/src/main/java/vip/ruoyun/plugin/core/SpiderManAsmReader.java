@@ -1,12 +1,11 @@
 package vip.ruoyun.plugin.core;
 
-import java.io.IOException;
 import java.io.InputStream;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.ClassWriter;
 
-public abstract class SpiderManAsmReader implements IAsmReader {
+public abstract class SpiderManAsmReader implements IClassReader {
 
     /**
      * 设置  ClassVisitor
@@ -17,7 +16,7 @@ public abstract class SpiderManAsmReader implements IAsmReader {
      * ASM 的入口
      */
     @Override
-    public byte[] readSingleClassToByteArray(InputStream inputStream) throws IOException {
+    public byte[] readSingleClassToByteArray(InputStream inputStream) throws Exception {
         //开始处理，通过 ASM
         ClassReader classReader = new ClassReader(inputStream);
         //writer

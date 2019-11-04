@@ -22,7 +22,7 @@ import java.util.concurrent.TimeUnit;
 import org.apache.commons.io.FileUtils;
 import org.gradle.api.Project;
 import vip.ruoyun.plugin.core.HandleHelper;
-import vip.ruoyun.plugin.core.IAsmReader;
+import vip.ruoyun.plugin.core.IClassReader;
 
 public abstract class SpiderManTransform extends Transform {
 
@@ -41,7 +41,8 @@ public abstract class SpiderManTransform extends Transform {
     @Override
     public final void transform(final TransformInvocation transformInvocation)
             throws TransformException, InterruptedException, IOException {
-        mHandleHelper = new HandleHelper(getAsmReader());
+        beginTransform();
+        mHandleHelper = new HandleHelper(getClassReader());
         super.transform(transformInvocation);
         long startTime = System.currentTimeMillis();
         Collection<TransformInput> inputs = transformInvocation.getInputs();//消费型输入，可以从中获取jar包和class文件夹路径。需要输出给下一个任务
@@ -123,6 +124,7 @@ public abstract class SpiderManTransform extends Transform {
         }
         executor.shutdown();
         executor.awaitTermination(1, TimeUnit.MINUTES);
+        endTransform();
     }
 
     private void handleDirectory(File inputDir, File outputDir) {
@@ -136,7 +138,7 @@ public abstract class SpiderManTransform extends Transform {
                         File outputFile = new File(filePath.replace(inputDirPath, outputDirPath));
                         try {
                             mHandleHelper.handleSingleClassToFile(file, outputFile, inputDirPath, isOpen());
-                        } catch (IOException e) {
+                        } catch (Exception e) {
                             e.printStackTrace();
                         }
                     });
@@ -157,7 +159,7 @@ public abstract class SpiderManTransform extends Transform {
         executor.execute(() -> {
             try {
                 mHandleHelper.handleSingleClassToFile(inputFile, destFile, srcDirPath, isOpen());
-            } catch (IOException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         });
@@ -171,7 +173,7 @@ public abstract class SpiderManTransform extends Transform {
                 } else {
                     FileUtils.copyFile(srcJar, destJar);
                 }
-            } catch (IOException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         });
@@ -204,5 +206,14 @@ public abstract class SpiderManTransform extends Transform {
 
     public abstract boolean isOpen();
 
-    public abstract IAsmReader getAsmReader();
+    public abstract IClassReader getClassReader();
+
+    public void beginTransform() {
+
+    }
+
+    public void endTransform() {
+
+    }
+
 }
