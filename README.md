@@ -2,7 +2,7 @@
 
 SpiderMan 是一个在编译时期动态修改代码的工具。
 
-支持增量、并发编译。
+支持增量、并发编译。支持 ASM、Javassist。
 
 包括以下功能：
 - 全埋点 AutoTracker
