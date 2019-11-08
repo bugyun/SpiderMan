@@ -1,5 +1,16 @@
 # SpiderMan
 
+SpiderMan is a tool for dynamically modifying code at compile time.
+
+Support for incremental, concurrent compilation. 
+Support ASM and Javassist.
+
+Includes the following features:
+- Fully buried AutoTracker
+- Log, print by annotation in any method
+- tryCatch, add tryCatch to any method via annotations
+- And so on, other features are under development.
+
 SpiderMan 是一个在编译时期动态修改代码的工具。
 
 支持增量、并发编译。支持 ASM、Javassist。
