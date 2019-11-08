@@ -12,6 +12,21 @@ Includes the following features:
 - tryCatch, add tryCatch to any method via annotations
 - And so on, other features are under development.
 
+## Custom plugin
+
+Rapid development based on SpiderMan-plugin-core
+
+[I am a link](https://github.com/bugyun/SpiderMan/tree/master/SpiderMan-plugin-core)
+
+
+## AutoTracker full buried point
+
+Android bytecode plugin, dynamically modify code during compilation, full buried tool based on SpiderMan-plugin-core plugin
+
+[I am a link](https://github.com/bugyun/SpiderMan/tree/master/SpiderMan-tracker-core)
+
+# SpiderMan
+
 SpiderMan 是一个在编译时期动态修改代码的工具。
 
 支持增量、并发编译。支持 ASM、Javassist。
