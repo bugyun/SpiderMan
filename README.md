@@ -7,7 +7,7 @@ Support for incremental, concurrent compilation.
 Support ASM and Javassist.
 
 Includes the following features:
-- Fully buried AutoTracker
+- Event Tracking AutoTracker
 - Log, print by annotation in any method
 - tryCatch, add tryCatch to any method via annotations
 - And so on, other features are under development.
@@ -19,7 +19,7 @@ Rapid development based on SpiderMan-plugin-core
 [I am a link](https://github.com/bugyun/SpiderMan/tree/master/SpiderMan-plugin-core)
 
 
-## AutoTracker full buried point
+## AutoTracker Event Tracking
 
 Android bytecode plugin, dynamically modify code during compilation, full buried tool based on SpiderMan-plugin-core plugin
 
