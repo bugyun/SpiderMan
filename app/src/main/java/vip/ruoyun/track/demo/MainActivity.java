@@ -1,17 +1,23 @@
 package vip.ruoyun.track.demo;
 
+import android.databinding.DataBindingUtil;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.databinding.DataBindingUtil;
-import vip.ruoyun.track.core.annotation.SpiderManIgnore;
-import vip.ruoyun.track.core.annotation.SpiderManPage;
+import vip.ruoyun.spiderman.tracker.annotation.AutoTrackerIgnore;
+import vip.ruoyun.spiderman.tracker.annotation.AutoTrackerPage;
+import vip.ruoyun.spiderman.tracker.annotation.PageMapping;
 import vip.ruoyun.track.demo.databinding.ActivityMainBinding;
 
-@SpiderManPage(name = "主界面")
-@SpiderManIgnore
+@AutoTrackerPage(
+        name = "主界面",
+        properties = {
+                @PageMapping(key = "", value = ""),
+                @PageMapping(key = "", value = "")
+        })
+@AutoTrackerIgnore
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
     private ActivityMainBinding mMainBinding;
@@ -24,7 +30,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mMainBinding.mButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(final View v) {
-
+                System.out.println("12123");
+                if (v.getId() == R.id.mButton) {
+                    System.out.println("12123");
+                    return;
+//                    throw new RuntimeException();
+                } else {
+                    System.out.println("12123");
+                    return;
+                }
             }
         });
 
