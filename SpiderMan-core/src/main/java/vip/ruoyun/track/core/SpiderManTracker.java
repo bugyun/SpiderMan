@@ -11,25 +11,15 @@ import androidx.fragment.app.Fragment;
  */
 public class SpiderManTracker {
 
-
-    //
-    public static void testView(View view) {
-
-    }
-
-    //利用所属Page+ViewTree构建ViewID.
-    public static void getViewId(View view) {
-
-    }
-
+    /**
+     * 点击按钮
+     */
     public static void trackView(View view) {
 
     }
 
-
-
     /**
-     * 获得焦点
+     * fragment 获得焦点
      */
     public static void onResume(Fragment fragment) {
         //FragmentTransaction 切换 getUserVisibleHint()一直为 true,fragment.isHidden()为 false
@@ -47,10 +37,6 @@ public class SpiderManTracker {
 
     }
 
-    public static void onDestroy(Fragment fragment) {
-
-    }
-
     /**
      * fragment 的方法，用来监听 tab 切换 fragment
      */
@@ -59,7 +45,6 @@ public class SpiderManTracker {
             //此时用来表示界面打开
 
         }
-
     }
 
     /**
