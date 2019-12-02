@@ -16,7 +16,7 @@ Android Gradle Transform 加速开发的工具
 
 关于插件开发的流程和如何上传到 jcenter 仓库，请参考下面的链接~
 
-[Android Gradle 自定义入门](https://ruoyun.vip/post/android-gradle-%E8%87%AA%E5%AE%9A%E4%B9%89%E5%85%A5%E9%97%A8/)
+[Android Gradle 自定义入门](https://blog.ruoyun.vip/post/android-gradle-%E8%87%AA%E5%AE%9A%E4%B9%89%E5%85%A5%E9%97%A8/)
 
 ## 依赖
 在你写 gradle 插件的过程中，在plugin 插件的 build.gradle 中添加下面的依赖。
