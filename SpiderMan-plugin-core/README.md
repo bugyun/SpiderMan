@@ -11,6 +11,7 @@ Android Gradle Transform 加速开发的工具
 4. 避免处理各种文件
 5. 只需要继承几个类就可以完成 ASM/Javassist 的代码注入
 6. 支持 ASM 和 Javassist 
+7. 完美支持增量编译，并解决增量编译中的问题
 
 ## 入门
 
