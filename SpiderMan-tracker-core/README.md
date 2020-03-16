@@ -1,25 +1,25 @@
 # AutoTracker
-Android字节码插件，编译期间动态修改代码
 
+Android控件自动化埋点，通过字节码插件，编译期间动态修改代码。
+
+开发者只需要在Application中初始化即可，不需要额外添加任何埋点代码。
 
 ## 使用
-根build.gradle添加插件
+根build.gradle添加插件，jcenter仓库
 ```groovy
-
-
 buildscript {
-
     repositories {
-        maven { url "https://dl.bintray.com/bugyun/maven" }
         jcenter()
-        google()
-        mavenCentral()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.0.1'
         classpath 'vip.ruoyun.spiderman.plugin:auto-tracker:1.0.0'
     }
 }
+```
+
+在主module的的 build.gradle 添加依赖
+```
+implementation 'vip.ruoyun.spiderman:auto-tracker:1.0.8'
 ```
 
 配置
@@ -32,12 +32,6 @@ autoTracker {
     // 是否打开全埋点功能,可选,默认true
     isOpenLogTrack = true
 }
-```
-
-
-在主module的的 build.gradle 添加依赖
-```
-implementation 'vip.ruoyun.spiderman:auto-tracker:1.0.8'
 ```
 
 ## 功能
@@ -63,8 +57,9 @@ context.startActvity(className,intent)
 ```
 
 设置 fragment 的 pageSession
+
 在创建 fragment 的时候 ，设置 tag 值，tag 值为 你定义好的 pageSession。
-```
+```java
 Bundle arguments = fragment.getArguments();
 if (arguments != null) {
     Bundle argumentsBundle = arguments.getBundle(AutoTracker.PAGE_BUNDLE_ID);
@@ -76,7 +71,6 @@ if (arguments != null) {
     }
 }
 ```
-
 
 ### 在特定的 view 方法中埋点
 如果有特殊的需求，必须在某个方法中埋点，那么需要在你方法上添加注解 @AutoTrackDataViewOnClick
@@ -247,7 +241,6 @@ AutoTracker.with(app).viewTracker(new IViewTracker() {
 - trackDrawerClosed
 - trackViewOnClick
 - trackViewOnClick
-
 
 ## 关于 butterknife
 
